@@ -164,15 +164,14 @@ function Home() {
           >
             <div className="flex flex-col gap-2 text-sm font-bold text-white/80">
               {[
-                ["Home", "#home"],
-                ["Highlights", "#highlights"],
-                ["Events", "#featured-events"],
-                ["Services", "#services"],
-                ["Gallery", "/gallery"],
-                ["Booking", "/booking"],
-                ["Contact", "/contact"],
-                ["Admin Login", "/admin-login"],
-              ].map(([label, href]) =>
+  ["Home", "#home"],
+  ["Highlights", "#highlights"],
+  ["Events", "#featured-events"],
+  ["Services", "#services"],
+  ["Gallery", "/gallery"],
+  ["Booking", "/booking"],
+  ["Contact", "/contact"],
+].map(([label, href]) =>
                 href.startsWith("/") ? (
                   <Link
                     key={href}
