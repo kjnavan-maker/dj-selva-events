@@ -214,7 +214,7 @@ function Home() {
   id="home"
   className="relative flex min-h-screen items-center px-4 pb-32 pt-28 sm:px-5 sm:pb-32 lg:pt-28"
 >
-        <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="mx-auto grid max-w-7xl items-center gap-5 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -231,7 +231,7 @@ function Home() {
               Sri Lanka’s Premium DJ Experience
             </motion.div>
 
-            <h1 className="text-[2.6rem] font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[4.8rem] xl:text-[5.4rem]">
+            <h1 className="text-[2.35rem] font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[4.8rem] xl:text-[5.4rem]">
               Feel the
               <br />
               Beat.
@@ -248,7 +248,7 @@ function Home() {
               unforgettable live music experiences with DJ Selva.
             </p>
 
-            <div className="mt-5 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <div className="mt-4 flex flex-wrap justify-center gap-3 lg:justify-start">
               <Link
                 to="/booking"
                 className="group flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black transition hover:bg-cyan-300 sm:px-6 md:px-7 md:py-3.5 md:text-base"
@@ -284,7 +284,7 @@ function Home() {
             initial={{ opacity: 0, scale: 0.84, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="relative order-2"
+            className="relative order-2 -mt-2 sm:mt-0"
           >
             {[
               {
