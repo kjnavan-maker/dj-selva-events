@@ -231,7 +231,7 @@ function Home() {
               Sri Lanka’s Premium DJ Experience
             </motion.div>
 
-            <h1 className="text-[3rem] font-black leading-[0.92] tracking-[-0.05em] sm:text-6xl md:text-7xl lg:text-[5.4rem] xl:text-[5.7rem]">
+            <h1 className="text-[2.6rem] font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[5.4rem] xl:text-[5.7rem]">
               Feel the
               <br />
               Beat.

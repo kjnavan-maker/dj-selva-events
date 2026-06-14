@@ -11,3 +11,18 @@ body {
   background: #020617;
   color: white;
 }
+
+@media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  h1 {
+    word-break: normal;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
