@@ -211,10 +211,10 @@ function Home() {
 
       {/* Hero Section */}
       <section
-        id="home"
-        className="relative mx-auto flex h-[255px] w-[255px] items-center justify-center rounded-full border border-cyan-300/15 bg-white/[0.025] shadow-[0_0_70px_rgba(37,99,255,0.25)] backdrop-blur-2xl sm:h-[350px] sm:w-[350px] md:h-[430px] md:w-[430px] lg:h-[450px] lg:w-[450px]"
-      >
-        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1fr_1fr]">
+  id="home"
+  className="relative flex min-h-screen items-center px-4 pb-32 pt-28 sm:px-5 sm:pb-32 lg:pt-28"
+>
+        <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -231,7 +231,7 @@ function Home() {
               Sri Lanka’s Premium DJ Experience
             </motion.div>
 
-            <h1 className="text-[2.6rem] font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[5.4rem] xl:text-[5.7rem]">
+            <h1 className="text-[2.6rem] font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[4.8rem] xl:text-[5.4rem]">
               Feel the
               <br />
               Beat.
@@ -248,7 +248,7 @@ function Home() {
               unforgettable live music experiences with DJ Selva.
             </p>
 
-            <div className="mt-7 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <div className="mt-5 flex flex-wrap justify-center gap-3 lg:justify-start">
               <Link
                 to="/booking"
                 className="group flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black transition hover:bg-cyan-300 sm:px-6 md:px-7 md:py-3.5 md:text-base"
@@ -464,7 +464,7 @@ function Home() {
               </div>
             </div>
 
-            <div className="mx-auto mt-7 max-w-sm rounded-3xl border border-white/10 bg-black/35 p-4 text-center backdrop-blur-xl">
+            <div className="mx-auto mt-3 max-w-xs rounded-3xl border border-white/10 bg-black/35 p-3 text-center backdrop-blur-xl sm:max-w-sm sm:p-4">
               <p className="text-xs font-bold uppercase tracking-[0.28em] text-cyan-300">
                 Premium Sound
               </p>
