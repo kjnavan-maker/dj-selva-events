@@ -4,25 +4,58 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   background: #020617;
   color: white;
+  width: 100%;
+  overflow-x: hidden;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+/* Mobile Comfort Fix */
 @media (max-width: 640px) {
+  html,
   body {
+    width: 100%;
     overflow-x: hidden;
   }
 
-  h1 {
-    word-break: normal;
+  section {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
   }
 
   button,
   a {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-card-fix {
+    border-radius: 1.5rem !important;
+    padding: 1rem !important;
+  }
+
+  .mobile-hide-glow {
+    filter: blur(40px) !important;
+    opacity: 0.35 !important;
   }
 }

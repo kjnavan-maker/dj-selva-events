@@ -212,7 +212,7 @@ function Home() {
       {/* Hero Section */}
       <section
         id="home"
-        className="relative flex min-h-screen items-center px-4 pb-12 pt-24 sm:px-5 sm:pb-14 lg:pt-24"
+        className="relative mx-auto flex h-[255px] w-[255px] items-center justify-center rounded-full border border-cyan-300/15 bg-white/[0.025] shadow-[0_0_70px_rgba(37,99,255,0.25)] backdrop-blur-2xl sm:h-[350px] sm:w-[350px] md:h-[430px] md:w-[430px] lg:h-[450px] lg:w-[450px]"
       >
         <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1fr_1fr]">
           {/* Left Content */}
@@ -346,7 +346,7 @@ function Home() {
 
             <div className="absolute -inset-10 rounded-full bg-gradient-to-r from-cyan-400/20 via-blue-500/10 to-purple-500/20 blur-3xl sm:-inset-12" />
 
-            <div className="relative mx-auto flex h-[285px] w-[285px] items-center justify-center rounded-full border border-cyan-300/15 bg-white/[0.025] shadow-[0_0_90px_rgba(37,99,255,0.32)] backdrop-blur-2xl sm:h-[350px] sm:w-[350px] md:h-[430px] md:w-[430px] lg:h-[450px] lg:w-[450px]">
+            <div className="relative mx-auto flex h-[255px] w-[255px] items-center justify-center rounded-full border border-cyan-300/15 bg-white/[0.025] shadow-[0_0_70px_rgba(37,99,255,0.25)] backdrop-blur-2xl sm:h-[350px] sm:w-[350px] md:h-[430px] md:w-[430px] lg:h-[450px] lg:w-[450px]">
               <motion.div
                 animate={{ scale: [1, 1.04, 1], rotate: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -417,7 +417,7 @@ function Home() {
                 <img
                   src={headphones[activeHeadphone]}
                   alt={`3D Headphone ${activeHeadphone + 1}`}
-                  className="max-h-[225px] w-[235px] translate-x-1 translate-y-1 object-contain drop-shadow-[0_0_65px_rgba(34,211,238,0.55)] sm:max-h-[285px] sm:w-[300px] md:max-h-[360px] md:w-[370px] lg:max-h-[375px] lg:w-[385px]"
+                  className="max-h-[200px] w-[210px] translate-x-1 translate-y-1 object-contain drop-shadow-[0_0_50px_rgba(34,211,238,0.45)] sm:max-h-[285px] sm:w-[300px] md:max-h-[360px] md:w-[370px] lg:max-h-[375px] lg:w-[385px]"
                 />
               </motion.div>
 
