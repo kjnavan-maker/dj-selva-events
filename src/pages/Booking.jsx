@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const API_URL = "http://localhost:5000/api";
+
 function Booking() {
   const ticketRef = useRef(null);
 
@@ -42,16 +44,13 @@ function Booking() {
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const selectedPrice = ticketPrices[formData.ticketType];
   const totalAmount = selectedPrice * Number(formData.quantity || 1);
 
-  const generateBookingId = () => {
-    return `DJS-${Math.floor(100000 + Math.random() * 900000)}`;
-  };
-
   const generateQrText = (booking) => {
-    return `${booking.id} | ${booking.name} | ${booking.event} | ${booking.ticket} | ${booking.quantity} ticket(s) | Rs. ${booking.amount}`;
+    return `${booking.bookingId} | ${booking.name} | ${booking.event} | ${booking.ticket} | ${booking.quantity} ticket(s) | Rs. ${booking.amount}`;
   };
 
   const createQRCodeUrl = (booking) => {
@@ -69,47 +68,54 @@ function Booking() {
     });
   };
 
-  const saveBookingToLocalStorage = (booking) => {
-    const oldBookings =
-      JSON.parse(localStorage.getItem("djSelvaBookings")) || [];
-
-    const updatedBookings = [booking, ...oldBookings];
-
-    localStorage.setItem("djSelvaBookings", JSON.stringify(updatedBookings));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const booking = {
-      id: generateBookingId(),
-      name: formData.name,
-      phone: formData.phone,
-      email: formData.email,
-      event: formData.event,
-      date: formData.eventDate,
-      venue: formData.venue,
-      ticket: formData.ticketType,
-      quantity: Number(formData.quantity),
-      amount: totalAmount,
-      paymentMethod: formData.paymentMethod,
-      notes: formData.notes,
-      paymentStatus: "Pending",
-      bookingStatus: "Pending",
-      entryStatus: "Not Checked-in",
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      setIsSubmitting(true);
 
-    saveBookingToLocalStorage(booking);
-    setConfirmedBooking(booking);
-    setBookingConfirmed(true);
-
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
+      const response = await fetch(`${API_URL}/bookings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          event: formData.event,
+          date: formData.eventDate,
+          venue: formData.venue,
+          ticket: formData.ticketType,
+          quantity: Number(formData.quantity),
+          amount: Number(totalAmount),
+          paymentMethod: formData.paymentMethod,
+          notes: formData.notes,
+        }),
       });
-    }, 100);
+
+      const data = await response.json();
+
+      if (!data.success) {
+        alert(data.message || "Booking failed");
+        return;
+      }
+
+      setConfirmedBooking(data.booking);
+      setBookingConfirmed(true);
+
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 100);
+    } catch (error) {
+      console.error("Booking API error:", error);
+      alert("Backend connection failed. Please check server.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEditBooking = () => {
@@ -140,7 +146,7 @@ function Booking() {
 
       const link = document.createElement("a");
       link.href = image;
-      link.download = `${confirmedBooking.id}-ticket.png`;
+      link.download = `${confirmedBooking.bookingId}-ticket.png`;
       link.click();
     } catch (error) {
       alert("Ticket download failed. Please try again.");
@@ -220,7 +226,10 @@ function Booking() {
 
               {/* Scroll-friendly Ticket Details */}
               <div className="mt-10 rounded-[1.8rem] border border-white/10 bg-black/40 p-5 sm:p-7">
-                <TicketRow label="Booking ID" value={confirmedBooking.id} />
+                <TicketRow
+                  label="Booking ID"
+                  value={confirmedBooking.bookingId}
+                />
                 <TicketRow label="Name" value={confirmedBooking.name} />
                 <TicketRow label="Phone" value={confirmedBooking.phone} />
                 <TicketRow label="Email" value={confirmedBooking.email} />
@@ -546,9 +555,10 @@ function Booking() {
 
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-4 font-black text-black transition hover:bg-cyan-300"
+                disabled={isSubmitting}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-4 font-black text-black transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Reserve Ticket
+                {isSubmitting ? "Saving Booking..." : "Reserve Ticket"}
                 <Ticket size={20} />
               </button>
             </form>

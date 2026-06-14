@@ -13,17 +13,39 @@ import {
   Users,
   XCircle,
   QrCode,
+  RefreshCw,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const API_URL = "http://localhost:5000/api";
+
 function AdminReports() {
   const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchBookings = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch(`${API_URL}/bookings`);
+      const data = await response.json();
+
+      if (!data.success) {
+        alert(data.message || "Failed to load report data");
+        return;
+      }
+
+      setBookings(data.bookings || []);
+    } catch (error) {
+      console.error("Reports fetch error:", error);
+      alert("Backend connection failed. Please check server.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const savedBookings =
-      JSON.parse(localStorage.getItem("djSelvaBookings")) || [];
-
-    setBookings(savedBookings);
+    fetchBookings();
   }, []);
 
   const reportData = useMemo(() => {
@@ -57,9 +79,7 @@ function AdminReports() {
     ];
 
     const ticketSummary = ticketTypes.map((type) => {
-      const typeBookings = bookings.filter(
-        (booking) => booking.ticket === type
-      );
+      const typeBookings = bookings.filter((booking) => booking.ticket === type);
 
       const sold = typeBookings.reduce(
         (sum, booking) => sum + Number(booking.quantity || 0),
@@ -115,6 +135,17 @@ ${reportData.ticketSummary
       `${item.type}: ${item.sold} sold | Rs. ${item.revenue.toLocaleString()} revenue`
   )
   .join("\n")}
+
+Recent Bookings:
+${bookings
+  .slice(0, 10)
+  .map(
+    (booking) =>
+      `${booking.bookingId} | ${booking.name} | ${booking.ticket} | Rs. ${Number(
+        booking.amount || 0
+      ).toLocaleString()} | ${booking.paymentStatus} | ${booking.entryStatus}`
+  )
+  .join("\n")}
 `;
 
     const blob = new Blob([reportText], { type: "text/plain" });
@@ -148,6 +179,14 @@ ${reportData.ticketSummary
           </Link>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={fetchBookings}
+              className="flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-5"
+            >
+              <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
+
             <img
               src="/dj-selva-logo.png"
               alt="DJ Selva Logo"
@@ -180,9 +219,18 @@ ${reportData.ticketSummary
 
           <p className="mt-5 max-w-2xl text-white/60">
             Customer bookings, paid payments, pending payments, checked-in
-            tickets, and revenue automatically calculate from localStorage data.
+            tickets, and revenue automatically calculate from MongoDB database.
           </p>
         </motion.div>
+
+        {isLoading && (
+          <div className="mb-8 rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-5 text-center">
+            <RefreshCw className="mx-auto animate-spin text-cyan-300" size={34} />
+            <p className="mt-3 font-black text-cyan-300">
+              Loading report data...
+            </p>
+          </div>
+        )}
 
         {/* Main Stats */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -220,7 +268,7 @@ ${reportData.ticketSummary
         </div>
 
         {/* Empty State */}
-        {bookings.length === 0 && (
+        {bookings.length === 0 && !isLoading && (
           <div className="mt-8 rounded-[2rem] border border-orange-300/20 bg-orange-300/10 p-8 text-center">
             <Ticket className="mx-auto text-orange-300" size={52} />
             <h2 className="mt-4 text-2xl font-black text-orange-300">
@@ -363,7 +411,7 @@ ${reportData.ticketSummary
           </div>
         </section>
 
-        {/* Recent Paid Bookings */}
+        {/* Recent Bookings */}
         <section className="mt-8">
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -381,18 +429,22 @@ ${reportData.ticketSummary
             <div className="mt-6 space-y-4">
               {bookings.slice(0, 5).map((booking) => (
                 <div
-                  key={booking.id}
+                  key={booking._id || booking.bookingId}
                   className="grid gap-4 rounded-2xl border border-white/10 bg-black/35 p-4 text-sm md:grid-cols-[1fr_1fr_1fr_0.7fr]"
                 >
                   <div>
-                    <p className="font-black">{booking.name}</p>
-                    <p className="mt-1 text-white/45">{booking.id}</p>
+                    <p className="font-black">{booking.name || "No Name"}</p>
+                    <p className="mt-1 text-cyan-300">
+                      {booking.bookingId || "No Booking ID"}
+                    </p>
                   </div>
 
                   <div>
-                    <p className="font-bold text-white/70">{booking.ticket}</p>
+                    <p className="font-bold text-white/70">
+                      {booking.ticket || "No Ticket"}
+                    </p>
                     <p className="mt-1 text-white/45">
-                      Qty: {booking.quantity}
+                      Qty: {booking.quantity || 0}
                     </p>
                   </div>
 
@@ -401,19 +453,19 @@ ${reportData.ticketSummary
                       Rs. {Number(booking.amount || 0).toLocaleString()}
                     </p>
                     <p className="mt-1 text-white/45">
-                      {booking.paymentStatus}
+                      {booking.paymentStatus || "Pending"}
                     </p>
                   </div>
 
                   <div>
                     <p className="font-bold text-purple-300">
-                      {booking.entryStatus}
+                      {booking.entryStatus || "Not Checked-in"}
                     </p>
                   </div>
                 </div>
               ))}
 
-              {bookings.length === 0 && (
+              {bookings.length === 0 && !isLoading && (
                 <p className="text-white/50">No recent bookings available.</p>
               )}
             </div>

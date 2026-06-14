@@ -13,17 +13,39 @@ import {
   Music,
   Eye,
   LogOut,
+  RefreshCw,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const API_URL = "http://localhost:5000/api";
+
 function AdminDashboard() {
   const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchBookings = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch(`${API_URL}/bookings`);
+      const data = await response.json();
+
+      if (!data.success) {
+        alert(data.message || "Failed to load dashboard data");
+        return;
+      }
+
+      setBookings(data.bookings || []);
+    } catch (error) {
+      console.error("Dashboard fetch error:", error);
+      alert("Backend connection failed. Please check server.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const savedBookings =
-      JSON.parse(localStorage.getItem("djSelvaBookings")) || [];
-
-    setBookings(savedBookings);
+    fetchBookings();
   }, []);
 
   const dashboardData = useMemo(() => {
@@ -83,6 +105,14 @@ function AdminDashboard() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={fetchBookings}
+              className="flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-5"
+            >
+              <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
+
+            <button
               onClick={handleLogout}
               className="flex items-center gap-2 rounded-full border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm font-black text-red-300 transition hover:bg-red-400 hover:text-white sm:px-5"
             >
@@ -122,9 +152,18 @@ function AdminDashboard() {
 
           <p className="mt-5 max-w-2xl text-white/60">
             Customer bookings, payment status, QR check-in, and revenue summary
-            automatically update from booking data.
+            automatically update from MongoDB database.
           </p>
         </motion.div>
+
+        {isLoading && (
+          <div className="mb-8 rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-5 text-center">
+            <RefreshCw className="mx-auto animate-spin text-cyan-300" size={34} />
+            <p className="mt-3 font-black text-cyan-300">
+              Loading dashboard data...
+            </p>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -211,7 +250,7 @@ function AdminDashboard() {
               </Link>
             </div>
 
-            {dashboardData.recentBookings.length === 0 && (
+            {dashboardData.recentBookings.length === 0 && !isLoading && (
               <div className="rounded-[2rem] border border-orange-300/20 bg-orange-300/10 p-8 text-center">
                 <Ticket className="mx-auto text-orange-300" size={48} />
 
@@ -240,6 +279,7 @@ function AdminDashboard() {
                     <thead className="bg-black/45 text-sm text-white/50">
                       <tr>
                         <th className="p-4">Customer</th>
+                        <th className="p-4">Booking ID</th>
                         <th className="p-4">Event</th>
                         <th className="p-4">Ticket</th>
                         <th className="p-4">Amount</th>
@@ -250,7 +290,7 @@ function AdminDashboard() {
                     <tbody>
                       {dashboardData.recentBookings.map((booking, index) => (
                         <tr
-                          key={booking.id || index}
+                          key={booking._id || booking.bookingId || index}
                           className="border-t border-white/10 text-sm transition hover:bg-white/[0.03]"
                         >
                           <td className="p-4">
@@ -260,6 +300,10 @@ function AdminDashboard() {
                             <p className="mt-1 text-white/45">
                               {booking.phone || "No Phone"}
                             </p>
+                          </td>
+
+                          <td className="p-4 font-black text-cyan-300">
+                            {booking.bookingId || "No ID"}
                           </td>
 
                           <td className="p-4 text-white/70">
@@ -287,7 +331,7 @@ function AdminDashboard() {
                 <div className="space-y-4 md:hidden">
                   {dashboardData.recentBookings.map((booking, index) => (
                     <div
-                      key={booking.id || index}
+                      key={booking._id || booking.bookingId || index}
                       className="rounded-3xl border border-white/10 bg-black/35 p-5"
                     >
                       <div className="flex items-start justify-between gap-4">
@@ -295,6 +339,9 @@ function AdminDashboard() {
                           <h3 className="font-black">
                             {booking.name || "No Name"}
                           </h3>
+                          <p className="mt-1 text-sm text-cyan-300">
+                            {booking.bookingId || "No Booking ID"}
+                          </p>
                           <p className="mt-1 text-sm text-white/45">
                             {booking.phone || "No Phone"}
                           </p>

@@ -14,23 +14,20 @@ import {
   MapPin,
   ShieldCheck,
   Clock,
+  Loader2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+
+const API_URL = "http://localhost:5000/api";
 
 function QRScanner() {
   const [bookingId, setBookingId] = useState("");
   const [scanResult, setScanResult] = useState(null);
   const [message, setMessage] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
 
-  const getBookings = () => {
-    return JSON.parse(localStorage.getItem("djSelvaBookings")) || [];
-  };
-
-  const saveBookings = (bookings) => {
-    localStorage.setItem("djSelvaBookings", JSON.stringify(bookings));
-  };
-
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
 
     const searchId = bookingId.trim().toUpperCase();
@@ -41,65 +38,81 @@ function QRScanner() {
       return;
     }
 
-    const bookings = getBookings();
-    const foundBooking = bookings.find(
-      (booking) => booking.id?.toUpperCase() === searchId
-    );
-
-    if (!foundBooking) {
+    try {
+      setIsVerifying(true);
+      setMessage("");
       setScanResult(null);
-      setMessage("Invalid Booking ID. Ticket not found.");
-      return;
+
+      const response = await fetch(`${API_URL}/bookings/${searchId}`);
+      const data = await response.json();
+
+      if (!data.success) {
+        setScanResult(null);
+        setMessage(data.message || "Invalid Booking ID. Ticket not found.");
+        return;
+      }
+
+      const foundBooking = data.booking;
+      setScanResult(foundBooking);
+
+      if (foundBooking.bookingStatus === "Cancelled") {
+        setMessage("This booking has been cancelled.");
+        return;
+      }
+
+      if (foundBooking.paymentStatus !== "Paid") {
+        setMessage("Payment is still pending. Entry not allowed.");
+        return;
+      }
+
+      if (foundBooking.bookingStatus !== "Confirmed") {
+        setMessage("Booking is not confirmed yet.");
+        return;
+      }
+
+      if (foundBooking.entryStatus === "Checked-in") {
+        setMessage("This ticket is already checked-in.");
+        return;
+      }
+
+      setMessage("Valid ticket. Entry allowed.");
+    } catch (error) {
+      console.error("Verify ticket error:", error);
+      setScanResult(null);
+      setMessage("Backend connection failed. Please check server.");
+    } finally {
+      setIsVerifying(false);
     }
-
-    setScanResult(foundBooking);
-
-    if (foundBooking.bookingStatus === "Cancelled") {
-      setMessage("This booking has been cancelled.");
-      return;
-    }
-
-    if (foundBooking.paymentStatus !== "Paid") {
-      setMessage("Payment is still pending. Entry not allowed.");
-      return;
-    }
-
-    if (foundBooking.bookingStatus !== "Confirmed") {
-      setMessage("Booking is not confirmed yet.");
-      return;
-    }
-
-    if (foundBooking.entryStatus === "Checked-in") {
-      setMessage("This ticket is already checked-in.");
-      return;
-    }
-
-    setMessage("Valid ticket. Entry allowed.");
   };
 
-  const markCheckedIn = () => {
+  const markCheckedIn = async () => {
     if (!scanResult) return;
 
-    const bookings = getBookings();
+    try {
+      setIsCheckingIn(true);
 
-    const updatedBookings = bookings.map((booking) =>
-      booking.id === scanResult.id
-        ? {
-            ...booking,
-            entryStatus: "Checked-in",
-            checkedInAt: new Date().toISOString(),
-          }
-        : booking
-    );
+      const response = await fetch(
+        `${API_URL}/bookings/${scanResult.bookingId}/check-in`,
+        {
+          method: "PUT",
+        }
+      );
 
-    saveBookings(updatedBookings);
+      const data = await response.json();
 
-    const updatedBooking = updatedBookings.find(
-      (booking) => booking.id === scanResult.id
-    );
+      if (!data.success) {
+        setMessage(data.message || "Check-in failed.");
+        return;
+      }
 
-    setScanResult(updatedBooking);
-    setMessage("Entry marked successfully. Customer checked-in.");
+      setScanResult(data.booking);
+      setMessage("Entry marked successfully. Customer checked-in.");
+    } catch (error) {
+      console.error("Check-in error:", error);
+      setMessage("Backend connection failed. Please check server.");
+    } finally {
+      setIsCheckingIn(false);
+    }
   };
 
   const clearScan = () => {
@@ -166,7 +179,7 @@ function QRScanner() {
 
           <p className="mt-5 max-w-2xl text-white/60">
             Enter customer Booking ID from QR ticket. System will verify payment,
-            booking confirmation, and entry status.
+            booking confirmation, and entry status from MongoDB database.
           </p>
         </motion.div>
 
@@ -215,17 +228,22 @@ function QRScanner() {
                   type="text"
                   value={bookingId}
                   onChange={(e) => setBookingId(e.target.value)}
-                  placeholder="Enter Booking ID e.g. DJS-123456"
+                  placeholder="Enter Booking ID e.g. DJS-568208"
                   className="w-full bg-transparent text-white outline-none placeholder:text-white/30"
                 />
               </div>
 
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-white px-6 py-4 font-black text-black transition hover:bg-cyan-300"
+                disabled={isVerifying}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-white px-6 py-4 font-black text-black transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Verify Ticket
-                <ShieldCheck size={20} />
+                {isVerifying ? "Verifying..." : "Verify Ticket"}
+                {isVerifying ? (
+                  <Loader2 size={20} className="animate-spin" />
+                ) : (
+                  <ShieldCheck size={20} />
+                )}
               </button>
 
               <button
@@ -261,7 +279,11 @@ function QRScanner() {
             <h2 className="text-3xl font-black">Ticket Status</h2>
 
             {message && (
-              <div className={`mt-6 rounded-2xl border p-4 ${getMessageBoxClass(message)}`}>
+              <div
+                className={`mt-6 rounded-2xl border p-4 ${getMessageBoxClass(
+                  message
+                )}`}
+              >
                 <div className="flex items-center gap-3">
                   {getMessageIcon(message)}
                   <p className="font-black">{message}</p>
@@ -291,16 +313,40 @@ function QRScanner() {
                   <h3 className="text-3xl font-black">{scanResult.name}</h3>
 
                   <p className="mt-2 font-black text-cyan-300">
-                    {scanResult.id}
+                    {scanResult.bookingId}
                   </p>
 
                   <div className="mt-6 grid gap-4 text-sm text-white/65 sm:grid-cols-2">
-                    <InfoLine icon={<Phone size={17} />} label="Phone" value={scanResult.phone} />
-                    <InfoLine icon={<User size={17} />} label="Email" value={scanResult.email} />
-                    <InfoLine icon={<Calendar size={17} />} label="Date" value={scanResult.date} />
-                    <InfoLine icon={<MapPin size={17} />} label="Venue" value={scanResult.venue} />
-                    <InfoLine icon={<Ticket size={17} />} label="Ticket" value={scanResult.ticket} />
-                    <InfoLine icon={<QrCode size={17} />} label="Event" value={scanResult.event} />
+                    <InfoLine
+                      icon={<Phone size={17} />}
+                      label="Phone"
+                      value={scanResult.phone}
+                    />
+                    <InfoLine
+                      icon={<User size={17} />}
+                      label="Email"
+                      value={scanResult.email}
+                    />
+                    <InfoLine
+                      icon={<Calendar size={17} />}
+                      label="Date"
+                      value={scanResult.date}
+                    />
+                    <InfoLine
+                      icon={<MapPin size={17} />}
+                      label="Venue"
+                      value={scanResult.venue}
+                    />
+                    <InfoLine
+                      icon={<Ticket size={17} />}
+                      label="Ticket"
+                      value={scanResult.ticket}
+                    />
+                    <InfoLine
+                      icon={<QrCode size={17} />}
+                      label="Event"
+                      value={scanResult.event}
+                    />
                   </div>
 
                   <div className="mt-6 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-5">
@@ -315,10 +361,15 @@ function QRScanner() {
                   {canCheckIn && (
                     <button
                       onClick={markCheckedIn}
-                      className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-green-300 px-6 py-4 font-black text-black transition hover:bg-white"
+                      disabled={isCheckingIn}
+                      className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-green-300 px-6 py-4 font-black text-black transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      <CheckCircle size={20} />
-                      Mark as Checked-in
+                      {isCheckingIn ? "Checking-in..." : "Mark as Checked-in"}
+                      {isCheckingIn ? (
+                        <Loader2 size={20} className="animate-spin" />
+                      ) : (
+                        <CheckCircle size={20} />
+                      )}
                     </button>
                   )}
 
@@ -361,7 +412,9 @@ function InfoLine({ icon, label, value }) {
         </span>
       </div>
 
-      <p className="break-words font-bold text-white">{value || "Not provided"}</p>
+      <p className="break-words font-bold text-white">
+        {value || "Not provided"}
+      </p>
     </div>
   );
 }
@@ -408,7 +461,8 @@ function getMessageBoxClass(message) {
   if (
     message.includes("Invalid") ||
     message.includes("cancelled") ||
-    message.includes("already")
+    message.includes("already") ||
+    message.includes("failed")
   ) {
     return "border-red-300/20 bg-red-300/10 text-red-300";
   }
@@ -428,7 +482,8 @@ function getMessageIcon(message) {
   if (
     message.includes("Invalid") ||
     message.includes("cancelled") ||
-    message.includes("already")
+    message.includes("already") ||
+    message.includes("failed")
   ) {
     return <XCircle size={22} />;
   }
