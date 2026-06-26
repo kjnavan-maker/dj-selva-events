@@ -7,6 +7,7 @@ dotenv.config();
 
 const app = express();
 
+// CORS setup
 app.use(
   cors({
     origin: [
@@ -18,16 +19,20 @@ app.use(
   })
 );
 
+// Middleware
 app.use(express.json());
 
+// Database connection
 connectDB();
 
+// Default API route
 app.get("/", (req, res) => {
   res.json({
     message: "DJ Selva Events API is running",
   });
 });
 
+// Health check route
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
@@ -35,8 +40,20 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// API Routes
 app.use("/api/bookings", require("./routes/bookingRoutes"));
+app.use("/api/private-bookings", require("./routes/privateBookingRoutes"));
+app.use("/api/events", require("./routes/eventRoutes"));
 
+// 404 route
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "API route not found",
+  });
+});
+
+// Start server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

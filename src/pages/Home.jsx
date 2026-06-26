@@ -20,8 +20,6 @@ function Home() {
     () => [
       "/headphone-1.png",
       "/headphone-2.png",
-      "/headphone-3.png",
-      "/headphone-4.png",
     ],
     []
   );
@@ -138,10 +136,10 @@ function Home() {
 
           <div className="flex items-center gap-2">
             <Link
-              to="/booking"
+              to="/private-booking"
               className="hidden rounded-full bg-white px-5 py-2.5 text-sm font-black text-black transition hover:bg-cyan-300 sm:block"
             >
-              Book Now
+              Book DJ Selva
             </Link>
 
             <button
@@ -164,14 +162,15 @@ function Home() {
           >
             <div className="flex flex-col gap-2 text-sm font-bold text-white/80">
               {[
-  ["Home", "#home"],
-  ["Highlights", "#highlights"],
-  ["Events", "#featured-events"],
-  ["Services", "#services"],
-  ["Gallery", "/gallery"],
-  ["Booking", "/booking"],
-  ["Contact", "/contact"],
-].map(([label, href]) =>
+                ["Home", "#home"],
+                ["Highlights", "#highlights"],
+                ["Events", "#featured-events"],
+                ["Services", "#services"],
+                ["Gallery", "/gallery"],
+                ["Book Ticket", "/booking"],
+                ["Book DJ Selva", "/private-booking"],
+                ["Contact", "/contact"],
+              ].map(([label, href]) =>
                 href.startsWith("/") ? (
                   <Link
                     key={href}
@@ -210,9 +209,9 @@ function Home() {
 
       {/* Hero Section */}
       <section
-  id="home"
-  className="relative flex min-h-screen items-center px-4 pb-32 pt-28 sm:px-5 sm:pb-32 lg:pt-28"
->
+        id="home"
+        className="relative flex min-h-screen items-center px-4 pb-32 pt-28 sm:px-5 sm:pb-32 lg:pt-28"
+      >
         <div className="mx-auto grid max-w-7xl items-center gap-5 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left Content */}
           <motion.div
@@ -252,7 +251,18 @@ function Home() {
                 to="/booking"
                 className="group flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black transition hover:bg-cyan-300 sm:px-6 md:px-7 md:py-3.5 md:text-base"
               >
-                Book an Event
+                Book Event Ticket
+                <ArrowRight
+                  size={18}
+                  className="transition group-hover:translate-x-1"
+                />
+              </Link>
+
+              <Link
+                to="/private-booking"
+                className="group flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-6 md:px-7 md:py-3.5 md:text-base"
+              >
+                Book DJ Selva
                 <ArrowRight
                   size={18}
                   className="transition group-hover:translate-x-1"
@@ -600,6 +610,15 @@ function Home() {
             <ServiceCard title="Sound Setup" icon="🔊" />
             <ServiceCard title="Lighting Setup" icon="💡" />
           </div>
+
+          <div className="mt-10 text-center">
+            <Link
+              to="/private-booking"
+              className="inline-block rounded-full bg-cyan-300 px-8 py-4 font-black text-black transition hover:bg-white"
+            >
+              Book DJ Selva for Your Event
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -712,16 +731,23 @@ function Home() {
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-base text-white/65 sm:text-lg">
-            Contact DJ Selva for event bookings, ticket reservations, private
-            shows, weddings, and premium celebrations.
+            Book tickets for DJ Selva’s public events or book DJ Selva for your
+            private events, weddings, parties, and premium celebrations.
           </p>
 
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link
               to="/booking"
-              className="flex items-center gap-2 rounded-full bg-white px-7 py-4 font-black text-black transition hover:bg-cyan-300 sm:px-9"
+              className="rounded-full bg-white px-7 py-4 font-black text-black transition hover:bg-cyan-300 sm:px-9"
             >
-              Book Now
+              Book Event Ticket
+            </Link>
+
+            <Link
+              to="/private-booking"
+              className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-7 py-4 font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-9"
+            >
+              Book DJ Selva
             </Link>
 
             <Link

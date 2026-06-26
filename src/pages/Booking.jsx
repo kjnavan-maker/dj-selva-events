@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import html2canvas from "html2canvas";
 import {
@@ -21,20 +21,15 @@ const API_URL = "http://localhost:5000/api";
 function Booking() {
   const ticketRef = useRef(null);
 
-  const ticketPrices = {
-    "Normal Ticket": 2500,
-    "VIP Ticket": 5000,
-    "Couple Ticket": 7000,
-    "Backstage Pass": 12000,
-  };
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
-    event: "DJ Selva Mega Night 2026",
-    eventDate: "27 June 2026",
-    venue: "Jaffna, Sri Lanka",
+    eventId: "",
     ticketType: "Normal Ticket",
     quantity: 1,
     paymentMethod: "Cash / Bank Transfer",
@@ -46,8 +41,53 @@ function Booking() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const selectedPrice = ticketPrices[formData.ticketType];
+  const ticketPrices = {
+    "Normal Ticket": Number(selectedEvent?.normalPrice || 0),
+    "VIP Ticket": Number(selectedEvent?.vipPrice || 0),
+    "Couple Ticket": Number(selectedEvent?.couplePrice || 0),
+    "Backstage Pass": Number(selectedEvent?.backstagePrice || 0),
+  };
+
+  const selectedPrice = ticketPrices[formData.ticketType] || 0;
   const totalAmount = selectedPrice * Number(formData.quantity || 1);
+
+  const fetchEvents = async () => {
+    try {
+      setIsLoadingEvents(true);
+
+      const response = await fetch(`${API_URL}/events`);
+      const data = await response.json();
+
+      if (!data.success) {
+        alert(data.message || "Failed to load events");
+        return;
+      }
+
+      const activeEvents = (data.events || []).filter(
+        (eventItem) =>
+          eventItem.status === "Upcoming" || eventItem.status === "Active"
+      );
+
+      setEvents(activeEvents);
+
+      if (activeEvents.length > 0) {
+        setSelectedEvent(activeEvents[0]);
+        setFormData((previous) => ({
+          ...previous,
+          eventId: activeEvents[0].eventId,
+        }));
+      }
+    } catch (error) {
+      console.error("Event fetch error:", error);
+      alert("Backend connection failed. Please check server.");
+    } finally {
+      setIsLoadingEvents(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   const generateQrText = (booking) => {
     return `${booking.bookingId} | ${booking.name} | ${booking.event} | ${booking.ticket} | ${booking.quantity} ticket(s) | Rs. ${booking.amount}`;
@@ -68,8 +108,26 @@ function Booking() {
     });
   };
 
+  const handleEventChange = (e) => {
+    const eventId = e.target.value;
+    const eventItem = events.find((item) => item.eventId === eventId);
+
+    setSelectedEvent(eventItem || null);
+
+    setFormData((previous) => ({
+      ...previous,
+      eventId,
+      ticketType: "Normal Ticket",
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!selectedEvent) {
+      alert("Please select an event");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -83,9 +141,11 @@ function Booking() {
           name: formData.name,
           phone: formData.phone,
           email: formData.email,
-          event: formData.event,
-          date: formData.eventDate,
-          venue: formData.venue,
+          event: selectedEvent.eventName,
+          date: selectedEvent.eventDate,
+          venue: `${selectedEvent.venue || ""}${
+            selectedEvent.city ? `, ${selectedEvent.city}` : ""
+          }`,
           ticket: formData.ticketType,
           quantity: Number(formData.quantity),
           amount: Number(totalAmount),
@@ -160,14 +220,12 @@ function Booking() {
 
     return (
       <div className="min-h-screen overflow-x-hidden bg-[#030712] px-5 py-8 text-white sm:px-6">
-        {/* Background */}
         <div className="fixed inset-0 -z-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_10%,rgba(34,211,238,0.16),transparent_34%),radial-gradient(circle_at_80%_70%,rgba(168,85,247,0.18),transparent_32%),linear-gradient(180deg,#030712_0%,#020617_55%,#000_100%)]" />
           <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:90px_90px]" />
         </div>
 
         <div className="mx-auto max-w-7xl">
-          {/* Top Bar */}
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <Link
               to="/"
@@ -193,7 +251,6 @@ function Booking() {
             </div>
           </div>
 
-          {/* Confirmation Ticket */}
           <motion.div
             initial={{ opacity: 0, y: 35, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -224,12 +281,8 @@ function Booking() {
                 </p>
               </div>
 
-              {/* Scroll-friendly Ticket Details */}
               <div className="mt-10 rounded-[1.8rem] border border-white/10 bg-black/40 p-5 sm:p-7">
-                <TicketRow
-                  label="Booking ID"
-                  value={confirmedBooking.bookingId}
-                />
+                <TicketRow label="Booking ID" value={confirmedBooking.bookingId} />
                 <TicketRow label="Name" value={confirmedBooking.name} />
                 <TicketRow label="Phone" value={confirmedBooking.phone} />
                 <TicketRow label="Email" value={confirmedBooking.email} />
@@ -237,10 +290,7 @@ function Booking() {
                 <TicketRow label="Date" value={confirmedBooking.date} />
                 <TicketRow label="Venue" value={confirmedBooking.venue} />
                 <TicketRow label="Ticket" value={confirmedBooking.ticket} />
-                <TicketRow
-                  label="Quantity"
-                  value={confirmedBooking.quantity}
-                />
+                <TicketRow label="Quantity" value={confirmedBooking.quantity} />
                 <TicketRow
                   label="Payment Method"
                   value={confirmedBooking.paymentMethod}
@@ -262,7 +312,6 @@ function Booking() {
                 />
               </div>
 
-              {/* QR Area */}
               <div className="mt-10 flex flex-col items-center">
                 <div className="rounded-[1.5rem] bg-white p-5 shadow-[0_0_45px_rgba(255,255,255,0.08)]">
                   <img
@@ -280,7 +329,6 @@ function Booking() {
               </div>
             </div>
 
-            {/* Buttons outside downloadable ticket */}
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <button
                 onClick={downloadTicket}
@@ -316,14 +364,12 @@ function Booking() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#030712] px-5 py-8 text-white sm:px-6">
-      {/* Background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_10%,rgba(34,211,238,0.16),transparent_34%),radial-gradient(circle_at_80%_70%,rgba(168,85,247,0.18),transparent_32%),linear-gradient(180deg,#030712_0%,#020617_55%,#000_100%)]" />
         <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:90px_90px]" />
       </div>
 
       <div className="mx-auto max-w-7xl">
-        {/* Top Bar */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <Link
             to="/"
@@ -350,7 +396,6 @@ function Booking() {
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1fr]">
-          {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
@@ -366,18 +411,38 @@ function Booking() {
             </h1>
 
             <p className="mt-5 max-w-2xl text-white/60">
-              Fill the booking form and reserve your ticket. After submission,
-              you can download your QR ticket confirmation.
+              Select an event created by admin, choose ticket type, and reserve
+              your ticket.
             </p>
 
             <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 backdrop-blur-2xl">
               <h2 className="text-2xl font-black">Ticket Prices</h2>
 
               <div className="mt-6 space-y-4">
-                <PriceLine name="Normal Ticket" price="Rs. 2,500" />
-                <PriceLine name="VIP Ticket" price="Rs. 5,000" />
-                <PriceLine name="Couple Ticket" price="Rs. 7,000" />
-                <PriceLine name="Backstage Pass" price="Rs. 12,000" />
+                <PriceLine
+                  name="Normal Ticket"
+                  price={`Rs. ${Number(
+                    selectedEvent?.normalPrice || 0
+                  ).toLocaleString()}`}
+                />
+                <PriceLine
+                  name="VIP Ticket"
+                  price={`Rs. ${Number(
+                    selectedEvent?.vipPrice || 0
+                  ).toLocaleString()}`}
+                />
+                <PriceLine
+                  name="Couple Ticket"
+                  price={`Rs. ${Number(
+                    selectedEvent?.couplePrice || 0
+                  ).toLocaleString()}`}
+                />
+                <PriceLine
+                  name="Backstage Pass"
+                  price={`Rs. ${Number(
+                    selectedEvent?.backstagePrice || 0
+                  ).toLocaleString()}`}
+                />
               </div>
             </div>
 
@@ -396,7 +461,6 @@ function Booking() {
             </div>
           </motion.div>
 
-          {/* Booking Form */}
           <motion.div
             initial={{ opacity: 0, x: 35 }}
             animate={{ opacity: 1, x: 0 }}
@@ -408,6 +472,18 @@ function Booking() {
             </p>
 
             <h2 className="text-3xl font-black">Customer Details</h2>
+
+            {isLoadingEvents && (
+              <div className="mt-6 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm font-bold text-cyan-300">
+                Loading events...
+              </div>
+            )}
+
+            {!isLoadingEvents && events.length === 0 && (
+              <div className="mt-6 rounded-2xl border border-orange-300/20 bg-orange-300/10 p-4 text-sm font-bold text-orange-300">
+                No active events available. Admin must create an event first.
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <InputField
@@ -446,35 +522,32 @@ function Booking() {
               <SelectField
                 icon={<Calendar size={18} />}
                 label="Select Event"
-                name="event"
-                value={formData.event}
-                onChange={handleChange}
-                options={[
-                  "DJ Selva Mega Night 2026",
-                  "Bass Drop Party",
-                  "Glow Festival",
-                ]}
+                name="eventId"
+                value={formData.eventId}
+                onChange={handleEventChange}
+                options={events.map((eventItem) => ({
+                  value: eventItem.eventId,
+                  label: `${eventItem.eventName} - ${eventItem.eventDate}`,
+                }))}
               />
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
+                <DisplayField
                   icon={<Calendar size={18} />}
                   label="Event Date"
-                  name="eventDate"
-                  value={formData.eventDate}
-                  onChange={handleChange}
-                  placeholder="27 June 2026"
-                  required
+                  value={selectedEvent?.eventDate || "Select event"}
                 />
 
-                <InputField
+                <DisplayField
                   icon={<MapPin size={18} />}
                   label="Venue"
-                  name="venue"
-                  value={formData.venue}
-                  onChange={handleChange}
-                  placeholder="Jaffna, Sri Lanka"
-                  required
+                  value={
+                    selectedEvent
+                      ? `${selectedEvent.venue}${
+                          selectedEvent.city ? `, ${selectedEvent.city}` : ""
+                        }`
+                      : "Select event"
+                  }
                 />
               </div>
 
@@ -535,7 +608,6 @@ function Booking() {
                 />
               </div>
 
-              {/* Total Box */}
               <div className="rounded-[1.5rem] border border-cyan-300/20 bg-cyan-300/10 p-5">
                 <div className="flex items-center justify-between gap-4">
                   <div>
@@ -555,7 +627,7 @@ function Booking() {
 
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoadingEvents || events.length === 0}
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-4 font-black text-black transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? "Saving Booking..." : "Reserve Ticket"}
@@ -604,6 +676,21 @@ function InputField({
   );
 }
 
+function DisplayField({ icon, label, value }) {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-bold text-white/80">
+        {label}
+      </label>
+
+      <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/35 px-4 py-3">
+        <span className="text-cyan-300">{icon}</span>
+        <span className="text-white/80">{value}</span>
+      </div>
+    </div>
+  );
+}
+
 function SelectField({ icon, label, name, value, onChange, options }) {
   return (
     <div>
@@ -620,11 +707,16 @@ function SelectField({ icon, label, name, value, onChange, options }) {
           onChange={onChange}
           className="w-full bg-transparent text-white outline-none"
         >
-          {options.map((option) => (
-            <option key={option} value={option} className="bg-[#020617]">
-              {option}
-            </option>
-          ))}
+          {options.map((option) => {
+            const valueText = typeof option === "string" ? option : option.value;
+            const labelText = typeof option === "string" ? option : option.label;
+
+            return (
+              <option key={valueText} value={valueText} className="bg-[#020617]">
+                {labelText}
+              </option>
+            );
+          })}
         </select>
       </div>
     </div>

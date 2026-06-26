@@ -14,28 +14,49 @@ import {
   XCircle,
   QrCode,
   RefreshCw,
+  Music,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const API_URL = "http://localhost:5000/api";
 
 function AdminReports() {
+  const [events, setEvents] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [privateRequests, setPrivateRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchBookings = async () => {
+  const fetchReports = async () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch(`${API_URL}/bookings`);
-      const data = await response.json();
+      const bookingsResponse = await fetch(`${API_URL}/bookings`);
+      const bookingsData = await bookingsResponse.json();
 
-      if (!data.success) {
-        alert(data.message || "Failed to load report data");
+      const eventsResponse = await fetch(`${API_URL}/events`);
+      const eventsData = await eventsResponse.json();
+
+      const privateResponse = await fetch(`${API_URL}/private-bookings`);
+      const privateData = await privateResponse.json();
+
+      if (!bookingsData.success) {
+        alert(bookingsData.message || "Failed to load booking report data");
         return;
       }
 
-      setBookings(data.bookings || []);
+      if (!eventsData.success) {
+        alert(eventsData.message || "Failed to load event report data");
+        return;
+      }
+
+      if (!privateData.success) {
+        alert(privateData.message || "Failed to load private booking report data");
+        return;
+      }
+
+      setBookings(bookingsData.bookings || []);
+      setEvents(eventsData.events || []);
+      setPrivateRequests(privateData.privateBookings || []);
     } catch (error) {
       console.error("Reports fetch error:", error);
       alert("Backend connection failed. Please check server.");
@@ -45,10 +66,20 @@ function AdminReports() {
   };
 
   useEffect(() => {
-    fetchBookings();
+    fetchReports();
   }, []);
 
   const reportData = useMemo(() => {
+    const totalEvents = events.length;
+
+    const activeEvents = events.filter(
+      (eventItem) => eventItem.status === "Active"
+    ).length;
+
+    const upcomingEvents = events.filter(
+      (eventItem) => eventItem.status === "Upcoming"
+    ).length;
+
     const totalBookings = bookings.length;
 
     const paidBookings = bookings.filter(
@@ -70,6 +101,16 @@ function AdminReports() {
     const totalRevenue = bookings
       .filter((booking) => booking.paymentStatus === "Paid")
       .reduce((sum, booking) => sum + Number(booking.amount || 0), 0);
+
+    const totalPrivateRequests = privateRequests.length;
+
+    const newPrivateRequests = privateRequests.filter(
+      (request) => request.status === "New Request"
+    ).length;
+
+    const confirmedPrivateRequests = privateRequests.filter(
+      (request) => request.status === "Confirmed"
+    ).length;
 
     const ticketTypes = [
       "Normal Ticket",
@@ -105,28 +146,43 @@ function AdminReports() {
     const maxSold = Math.max(...ticketSummary.map((item) => item.sold), 1);
 
     return {
+      totalEvents,
+      activeEvents,
+      upcomingEvents,
       totalBookings,
       paidBookings,
       pendingBookings,
       cancelledBookings,
       checkedInCount,
       totalRevenue,
+      totalPrivateRequests,
+      newPrivateRequests,
+      confirmedPrivateRequests,
       ticketSummary,
       totalSold,
       maxSold,
     };
-  }, [bookings]);
+  }, [events, bookings, privateRequests]);
 
   const exportReport = () => {
     const reportText = `
-DJ Selva Events - Sales Report
---------------------------------
-Total Bookings: ${reportData.totalBookings}
+DJ Selva Events - Full Admin Report
+-----------------------------------
+Total Events: ${reportData.totalEvents}
+Active Events: ${reportData.activeEvents}
+Upcoming Events: ${reportData.upcomingEvents}
+
+Total Ticket Bookings: ${reportData.totalBookings}
 Paid Bookings: ${reportData.paidBookings}
 Pending Bookings: ${reportData.pendingBookings}
 Cancelled Bookings: ${reportData.cancelledBookings}
 Checked-in Customers: ${reportData.checkedInCount}
+Tickets Sold: ${reportData.totalSold}
 Total Revenue: Rs. ${reportData.totalRevenue.toLocaleString()}
+
+Private DJ Requests: ${reportData.totalPrivateRequests}
+New Private Requests: ${reportData.newPrivateRequests}
+Confirmed Private Events: ${reportData.confirmedPrivateRequests}
 
 Ticket Summary:
 ${reportData.ticketSummary
@@ -153,7 +209,7 @@ ${bookings
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "dj-selva-sales-report.txt";
+    link.download = "dj-selva-full-admin-report.txt";
     link.click();
 
     URL.revokeObjectURL(url);
@@ -161,14 +217,12 @@ ${bookings
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#030712] px-5 py-8 text-white sm:px-6">
-      {/* Background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_10%,rgba(34,211,238,0.18),transparent_34%),radial-gradient(circle_at_85%_70%,rgba(168,85,247,0.18),transparent_32%),linear-gradient(180deg,#030712_0%,#020617_55%,#000_100%)]" />
         <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:90px_90px]" />
       </div>
 
       <div className="mx-auto max-w-7xl">
-        {/* Top Bar */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <Link
             to="/admin"
@@ -180,7 +234,7 @@ ${bookings
 
           <div className="flex items-center gap-3">
             <button
-              onClick={fetchBookings}
+              onClick={fetchReports}
               className="flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-5"
             >
               <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
@@ -202,7 +256,6 @@ ${bookings
           </div>
         </div>
 
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 35 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,12 +267,13 @@ ${bookings
           </p>
 
           <h1 className="text-4xl font-black sm:text-5xl md:text-7xl">
-            Event sales report.
+            Full admin report.
           </h1>
 
           <p className="mt-5 max-w-2xl text-white/60">
-            Customer bookings, paid payments, pending payments, checked-in
-            tickets, and revenue automatically calculate from MongoDB database.
+            Events, customer ticket bookings, private DJ requests, payment
+            status, QR check-in, and revenue automatically calculate from
+            MongoDB database.
           </p>
         </motion.div>
 
@@ -232,7 +286,6 @@ ${bookings
           </div>
         )}
 
-        {/* Main Stats */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <ReportStat
             icon={<DollarSign />}
@@ -251,10 +304,10 @@ ${bookings
           />
 
           <ReportStat
-            icon={<CheckCircle />}
-            title="Paid Bookings"
-            value={reportData.paidBookings}
-            text="Payment confirmed"
+            icon={<Calendar />}
+            title="Total Events"
+            value={reportData.totalEvents}
+            text={`${reportData.activeEvents} active, ${reportData.upcomingEvents} upcoming`}
             color="purple"
           />
 
@@ -267,28 +320,60 @@ ${bookings
           />
         </div>
 
-        {/* Empty State */}
-        {bookings.length === 0 && !isLoading && (
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <ReportStat
+            icon={<CheckCircle />}
+            title="Paid Bookings"
+            value={reportData.paidBookings}
+            text="Payment confirmed"
+            color="green"
+          />
+
+          <ReportStat
+            icon={<QrCode />}
+            title="Checked-in"
+            value={reportData.checkedInCount}
+            text="QR entry completed"
+            color="cyan"
+          />
+
+          <ReportStat
+            icon={<Music />}
+            title="Private Requests"
+            value={reportData.totalPrivateRequests}
+            text={`${reportData.newPrivateRequests} new requests`}
+            color="purple"
+          />
+
+          <ReportStat
+            icon={<Users />}
+            title="Confirmed Private"
+            value={reportData.confirmedPrivateRequests}
+            text="Private events confirmed"
+            color="orange"
+          />
+        </div>
+
+        {bookings.length === 0 && events.length === 0 && !isLoading && (
           <div className="mt-8 rounded-[2rem] border border-orange-300/20 bg-orange-300/10 p-8 text-center">
             <Ticket className="mx-auto text-orange-300" size={52} />
             <h2 className="mt-4 text-2xl font-black text-orange-300">
-              No booking data found
+              No report data found
             </h2>
             <p className="mt-3 text-white/60">
-              First customer booking create pannunga. Then reports automatic ah
-              update aagum.
+              First admin event create pannunga. Then customer booking create
+              pannina reports automatic ah update aagum.
             </p>
 
             <Link
-              to="/booking"
+              to="/admin/events"
               className="mt-6 inline-block rounded-full bg-white px-7 py-3 font-black text-black transition hover:bg-cyan-300"
             >
-              Create Test Booking
+              Create Event
             </Link>
           </div>
         )}
 
-        {/* Event Summary */}
         <div className="mt-8 grid gap-8 lg:grid-cols-[0.75fr_1fr]">
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -298,16 +383,16 @@ ${bookings
             className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_0_45px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:p-8"
           >
             <p className="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-purple-300">
-              Event Summary
+              System Summary
             </p>
 
-            <h2 className="text-3xl font-black">DJ Selva Mega Night 2026</h2>
+            <h2 className="text-3xl font-black">DJ Selva Events Platform</h2>
 
             <div className="mt-7 space-y-4">
               <SummaryLine
                 icon={<Calendar size={18} />}
-                label="Event Date"
-                value="27 June 2026"
+                label="Total Events"
+                value={`${reportData.totalEvents} Events`}
               />
 
               <SummaryLine
@@ -329,6 +414,12 @@ ${bookings
               />
 
               <SummaryLine
+                icon={<Music size={18} />}
+                label="Private Requests"
+                value={`${reportData.totalPrivateRequests} Requests`}
+              />
+
+              <SummaryLine
                 icon={<XCircle size={18} />}
                 label="Cancelled"
                 value={`${reportData.cancelledBookings} Bookings`}
@@ -344,7 +435,6 @@ ${bookings
             </button>
           </motion.div>
 
-          {/* Ticket Sales */}
           <motion.div
             initial={{ opacity: 0, x: 35 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -379,7 +469,6 @@ ${bookings
           </motion.div>
         </div>
 
-        {/* Revenue Cards */}
         <section className="mt-8">
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -411,7 +500,6 @@ ${bookings
           </div>
         </section>
 
-        {/* Recent Bookings */}
         <section className="mt-8">
           <motion.div
             initial={{ opacity: 0, y: 35 }}

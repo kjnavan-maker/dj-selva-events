@@ -27,10 +27,20 @@ function QRScanner() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isCheckingIn, setIsCheckingIn] = useState(false);
 
+  const extractBookingId = (value) => {
+    const text = value.trim().toUpperCase();
+
+    if (text.includes("|")) {
+      return text.split("|")[0].trim();
+    }
+
+    return text;
+  };
+
   const handleVerify = async (e) => {
     e.preventDefault();
 
-    const searchId = bookingId.trim().toUpperCase();
+    const searchId = extractBookingId(bookingId);
 
     if (!searchId) {
       setMessage("Please enter booking ID.");
@@ -54,6 +64,7 @@ function QRScanner() {
 
       const foundBooking = data.booking;
       setScanResult(foundBooking);
+      setBookingId(foundBooking.bookingId || searchId);
 
       if (foundBooking.bookingStatus === "Cancelled") {
         setMessage("This booking has been cancelled.");
@@ -129,14 +140,12 @@ function QRScanner() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#030712] px-5 py-8 text-white sm:px-6">
-      {/* Background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_10%,rgba(34,211,238,0.18),transparent_34%),radial-gradient(circle_at_85%_70%,rgba(168,85,247,0.18),transparent_32%),linear-gradient(180deg,#030712_0%,#020617_55%,#000_100%)]" />
         <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:90px_90px]" />
       </div>
 
       <div className="mx-auto max-w-7xl">
-        {/* Top Bar */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <Link
             to="/admin"
@@ -162,7 +171,6 @@ function QRScanner() {
           </div>
         </div>
 
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 35 }}
           animate={{ opacity: 1, y: 0 }}
@@ -184,7 +192,6 @@ function QRScanner() {
         </motion.div>
 
         <div className="grid gap-8 lg:grid-cols-[0.8fr_1fr]">
-          {/* Scanner Box */}
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
@@ -200,10 +207,9 @@ function QRScanner() {
             </h2>
 
             <p className="mt-3 text-center text-white/55">
-              Demo version: type Booking ID from customer QR ticket.
+              Demo version: type Booking ID or paste full QR text.
             </p>
 
-            {/* Fake Scan Animation */}
             <div className="relative mx-auto mt-8 flex h-64 max-w-sm items-center justify-center overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-black/45">
               <div className="absolute inset-6 rounded-2xl border border-white/10" />
 
@@ -256,16 +262,14 @@ function QRScanner() {
             </form>
 
             <div className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-white/55">
-              <p className="font-bold text-white/80">Test Flow:</p>
+              <p className="font-bold text-white/80">Correct Flow:</p>
               <p className="mt-2">
-                First booking page la ticket reserve pannunga. Then admin
-                bookings page la payment confirm pannunga. Finally inga Booking
-                ID verify pannunga.
+                Booking create → Admin payment Paid + booking Confirmed → QR
+                Scan → Mark as Checked-in.
               </p>
             </div>
           </motion.div>
 
-          {/* Result Box */}
           <motion.div
             initial={{ opacity: 0, x: 35 }}
             animate={{ opacity: 1, x: 0 }}
@@ -317,36 +321,12 @@ function QRScanner() {
                   </p>
 
                   <div className="mt-6 grid gap-4 text-sm text-white/65 sm:grid-cols-2">
-                    <InfoLine
-                      icon={<Phone size={17} />}
-                      label="Phone"
-                      value={scanResult.phone}
-                    />
-                    <InfoLine
-                      icon={<User size={17} />}
-                      label="Email"
-                      value={scanResult.email}
-                    />
-                    <InfoLine
-                      icon={<Calendar size={17} />}
-                      label="Date"
-                      value={scanResult.date}
-                    />
-                    <InfoLine
-                      icon={<MapPin size={17} />}
-                      label="Venue"
-                      value={scanResult.venue}
-                    />
-                    <InfoLine
-                      icon={<Ticket size={17} />}
-                      label="Ticket"
-                      value={scanResult.ticket}
-                    />
-                    <InfoLine
-                      icon={<QrCode size={17} />}
-                      label="Event"
-                      value={scanResult.event}
-                    />
+                    <InfoLine icon={<Phone size={17} />} label="Phone" value={scanResult.phone} />
+                    <InfoLine icon={<User size={17} />} label="Email" value={scanResult.email} />
+                    <InfoLine icon={<Calendar size={17} />} label="Date" value={scanResult.date} />
+                    <InfoLine icon={<MapPin size={17} />} label="Venue" value={scanResult.venue} />
+                    <InfoLine icon={<Ticket size={17} />} label="Ticket" value={scanResult.ticket} />
+                    <InfoLine icon={<QrCode size={17} />} label="Event" value={scanResult.event} />
                   </div>
 
                   <div className="mt-6 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-5">
@@ -444,7 +424,7 @@ function StatusBadge({ status }) {
 
   return (
     <span className={`rounded-full px-3 py-1 text-xs font-black ${className}`}>
-      {status}
+      {status || "Unknown"}
     </span>
   );
 }

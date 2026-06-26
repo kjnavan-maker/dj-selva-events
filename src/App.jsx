@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import Home from "./pages/Home";
 import Booking from "./pages/Booking";
+import PrivateBooking from "./pages/PrivateBooking";
 import AdminDashboard from "./pages/AdminDashboard";
 import QRScanner from "./pages/QRScanner";
 import EventDetails from "./pages/EventDetails";
@@ -9,6 +11,7 @@ import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
 import ManageEvents from "./pages/ManageEvents";
 import ManageBookings from "./pages/ManageBookings";
+import ManagePrivateBookings from "./pages/ManagePrivateBookings";
 import AdminReports from "./pages/AdminReports";
 
 function ProtectedAdminRoute({ children }) {
@@ -28,6 +31,7 @@ function App() {
         {/* Public Pages */}
         <Route path="/" element={<Home />} />
         <Route path="/booking" element={<Booking />} />
+        <Route path="/private-booking" element={<PrivateBooking />} />
         <Route path="/event-details" element={<EventDetails />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/contact" element={<Contact />} />
@@ -59,6 +63,15 @@ function App() {
           element={
             <ProtectedAdminRoute>
               <ManageBookings />
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/private-bookings"
+          element={
+            <ProtectedAdminRoute>
+              <ManagePrivateBookings />
             </ProtectedAdminRoute>
           }
         />

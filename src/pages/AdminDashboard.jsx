@@ -20,22 +20,42 @@ import { Link } from "react-router-dom";
 const API_URL = "http://localhost:5000/api";
 
 function AdminDashboard() {
+  const [events, setEvents] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [privateRequests, setPrivateRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchBookings = async () => {
+  const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch(`${API_URL}/bookings`);
-      const data = await response.json();
+      const bookingsResponse = await fetch(`${API_URL}/bookings`);
+      const bookingsData = await bookingsResponse.json();
 
-      if (!data.success) {
-        alert(data.message || "Failed to load dashboard data");
+      const privateResponse = await fetch(`${API_URL}/private-bookings`);
+      const privateData = await privateResponse.json();
+
+      const eventsResponse = await fetch(`${API_URL}/events`);
+      const eventsData = await eventsResponse.json();
+
+      if (!bookingsData.success) {
+        alert(bookingsData.message || "Failed to load booking data");
         return;
       }
 
-      setBookings(data.bookings || []);
+      if (!privateData.success) {
+        alert(privateData.message || "Failed to load private booking data");
+        return;
+      }
+
+      if (!eventsData.success) {
+        alert(eventsData.message || "Failed to load event data");
+        return;
+      }
+
+      setBookings(bookingsData.bookings || []);
+      setPrivateRequests(privateData.privateBookings || []);
+      setEvents(eventsData.events || []);
     } catch (error) {
       console.error("Dashboard fetch error:", error);
       alert("Backend connection failed. Please check server.");
@@ -45,10 +65,20 @@ function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchBookings();
+    fetchDashboardData();
   }, []);
 
   const dashboardData = useMemo(() => {
+    const totalEvents = events.length;
+
+    const activeEvents = events.filter(
+      (eventItem) => eventItem.status === "Active"
+    ).length;
+
+    const upcomingEvents = events.filter(
+      (eventItem) => eventItem.status === "Upcoming"
+    ).length;
+
     const totalBookings = bookings.length;
 
     const paidBookings = bookings.filter(
@@ -69,15 +99,31 @@ function AdminDashboard() {
 
     const recentBookings = bookings.slice(0, 5);
 
+    const totalPrivateRequests = privateRequests.length;
+
+    const newPrivateRequests = privateRequests.filter(
+      (request) => request.status === "New Request"
+    ).length;
+
+    const confirmedPrivateRequests = privateRequests.filter(
+      (request) => request.status === "Confirmed"
+    ).length;
+
     return {
+      totalEvents,
+      activeEvents,
+      upcomingEvents,
       totalBookings,
       paidBookings,
       pendingBookings,
       checkedInBookings,
       totalRevenue,
       recentBookings,
+      totalPrivateRequests,
+      newPrivateRequests,
+      confirmedPrivateRequests,
     };
-  }, [bookings]);
+  }, [events, bookings, privateRequests]);
 
   const handleLogout = () => {
     localStorage.removeItem("djAdminLoggedIn");
@@ -86,14 +132,12 @@ function AdminDashboard() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#030712] px-5 py-8 text-white sm:px-6">
-      {/* Background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_10%,rgba(34,211,238,0.18),transparent_34%),radial-gradient(circle_at_85%_70%,rgba(168,85,247,0.18),transparent_32%),linear-gradient(180deg,#030712_0%,#020617_55%,#000_100%)]" />
         <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:90px_90px]" />
       </div>
 
       <div className="mx-auto max-w-7xl">
-        {/* Top Bar */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <Link
             to="/"
@@ -105,7 +149,7 @@ function AdminDashboard() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={fetchBookings}
+              onClick={fetchDashboardData}
               className="flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-5"
             >
               <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
@@ -135,7 +179,6 @@ function AdminDashboard() {
           </div>
         </div>
 
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 35 }}
           animate={{ opacity: 1, y: 0 }}
@@ -151,8 +194,8 @@ function AdminDashboard() {
           </h1>
 
           <p className="mt-5 max-w-2xl text-white/60">
-            Customer bookings, payment status, QR check-in, and revenue summary
-            automatically update from MongoDB database.
+            Customer ticket bookings, private event requests, payment status,
+            QR check-in, and revenue summary automatically update from MongoDB.
           </p>
         </motion.div>
 
@@ -165,21 +208,20 @@ function AdminDashboard() {
           </div>
         )}
 
-        {/* Stats */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={<Calendar />}
             title="Total Events"
-            value="01"
-            subtitle="Active event"
+            value={dashboardData.totalEvents}
+            subtitle={`${dashboardData.activeEvents} active, ${dashboardData.upcomingEvents} upcoming`}
             color="cyan"
           />
 
           <StatCard
             icon={<Ticket />}
-            title="Total Bookings"
+            title="Ticket Bookings"
             value={dashboardData.totalBookings}
-            subtitle="All reservations"
+            subtitle="Public event tickets"
             color="purple"
           />
 
@@ -187,7 +229,7 @@ function AdminDashboard() {
             icon={<DollarSign />}
             title="Revenue"
             value={`Rs. ${dashboardData.totalRevenue.toLocaleString()}`}
-            subtitle="Paid bookings only"
+            subtitle="Paid ticket bookings"
             color="green"
           />
 
@@ -200,7 +242,6 @@ function AdminDashboard() {
           />
         </div>
 
-        {/* Extra Stats */}
         <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <MiniStat
             icon={<CheckCircle />}
@@ -221,9 +262,27 @@ function AdminDashboard() {
           />
         </div>
 
-        {/* Main Grid */}
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <MiniStat
+            icon={<Music />}
+            title="Private Requests"
+            value={dashboardData.totalPrivateRequests}
+          />
+
+          <MiniStat
+            icon={<Clock />}
+            title="New Private Requests"
+            value={dashboardData.newPrivateRequests}
+          />
+
+          <MiniStat
+            icon={<Calendar />}
+            title="Confirmed Private Events"
+            value={dashboardData.confirmedPrivateRequests}
+          />
+        </div>
+
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_0.42fr]">
-          {/* Recent Bookings */}
           <motion.div
             initial={{ opacity: 0, y: 45 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -238,7 +297,7 @@ function AdminDashboard() {
                 </p>
 
                 <h2 className="text-2xl font-black sm:text-3xl">
-                  Recent Bookings
+                  Recent Ticket Bookings
                 </h2>
               </div>
 
@@ -255,11 +314,11 @@ function AdminDashboard() {
                 <Ticket className="mx-auto text-orange-300" size={48} />
 
                 <h3 className="mt-4 text-2xl font-black text-orange-300">
-                  No bookings yet
+                  No ticket bookings yet
                 </h3>
 
                 <p className="mt-3 text-white/60">
-                  Customer booking create pannina inga show aagum.
+                  Customer ticket booking create pannina inga show aagum.
                 </p>
 
                 <Link
@@ -273,7 +332,6 @@ function AdminDashboard() {
 
             {dashboardData.recentBookings.length > 0 && (
               <>
-                {/* Desktop Table */}
                 <div className="hidden overflow-hidden rounded-3xl border border-white/10 md:block">
                   <table className="w-full border-collapse text-left">
                     <thead className="bg-black/45 text-sm text-white/50">
@@ -327,7 +385,6 @@ function AdminDashboard() {
                   </table>
                 </div>
 
-                {/* Mobile Booking Cards */}
                 <div className="space-y-4 md:hidden">
                   {dashboardData.recentBookings.map((booking, index) => (
                     <div
@@ -367,9 +424,34 @@ function AdminDashboard() {
             )}
           </motion.div>
 
-          {/* Right Side */}
           <div className="space-y-8">
-            {/* QR Scan */}
+            <motion.div
+              initial={{ opacity: 0, x: 35 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.65 }}
+              className="rounded-[2rem] border border-purple-300/20 bg-purple-300/10 p-6 shadow-[0_0_45px_rgba(168,85,247,0.15)] backdrop-blur-2xl"
+            >
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black/45 text-purple-300">
+                <Music size={34} />
+              </div>
+
+              <h2 className="mt-6 text-3xl font-black">Private Bookings</h2>
+
+              <p className="mt-3 text-white/60">
+                Manage DJ Selva private event service requests for weddings,
+                birthdays, college events, and parties.
+              </p>
+
+              <Link
+                to="/admin/private-bookings"
+                className="mt-6 flex items-center justify-center gap-2 rounded-full bg-white px-6 py-4 font-black text-black transition hover:bg-purple-300"
+              >
+                Open Requests
+                <Music size={20} />
+              </Link>
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 35 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -397,7 +479,6 @@ function AdminDashboard() {
               </Link>
             </motion.div>
 
-            {/* Ticket Categories */}
             <motion.div
               initial={{ opacity: 0, x: 35 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -421,8 +502,7 @@ function AdminDashboard() {
           </div>
         </div>
 
-        {/* Bottom Action Cards */}
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           <Link to="/admin/events">
             <ActionCard
               icon={<Music />}
@@ -434,8 +514,16 @@ function AdminDashboard() {
           <Link to="/admin/bookings">
             <ActionCard
               icon={<Users />}
-              title="Manage Bookings"
-              text="View, confirm, or cancel customer bookings."
+              title="Manage Ticket Bookings"
+              text="View, confirm, or cancel customer ticket bookings."
+            />
+          </Link>
+
+          <Link to="/admin/private-bookings">
+            <ActionCard
+              icon={<Calendar />}
+              title="Private Bookings"
+              text="Manage DJ Selva private event service requests."
             />
           </Link>
 

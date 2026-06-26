@@ -114,19 +114,13 @@ const getBookingById = async (req, res) => {
   }
 };
 
+// PUT /api/bookings/:bookingId/confirm
 // PUT /api/bookings/:bookingId/confirm-payment
 const confirmPayment = async (req, res) => {
   try {
     const bookingId = req.params.bookingId.toUpperCase();
 
-    const booking = await Booking.findOneAndUpdate(
-      { bookingId },
-      {
-        paymentStatus: "Paid",
-        bookingStatus: "Confirmed",
-      },
-      { returnDocument: "after" }
-    );
+    const booking = await Booking.findOne({ bookingId });
 
     if (!booking) {
       return res.status(404).json({
@@ -134,6 +128,18 @@ const confirmPayment = async (req, res) => {
         message: "Booking not found",
       });
     }
+
+    if (booking.bookingStatus === "Cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: "Cancelled booking cannot be confirmed",
+      });
+    }
+
+    booking.paymentStatus = "Paid";
+    booking.bookingStatus = "Confirmed";
+
+    await booking.save();
 
     res.json({
       success: true,
@@ -154,13 +160,7 @@ const cancelBooking = async (req, res) => {
   try {
     const bookingId = req.params.bookingId.toUpperCase();
 
-    const booking = await Booking.findOneAndUpdate(
-      { bookingId },
-      {
-        bookingStatus: "Cancelled",
-      },
-      { returnDocument: "after" }
-    );
+    const booking = await Booking.findOne({ bookingId });
 
     if (!booking) {
       return res.status(404).json({
@@ -168,6 +168,11 @@ const cancelBooking = async (req, res) => {
         message: "Booking not found",
       });
     }
+
+    booking.bookingStatus = "Cancelled";
+    booking.paymentStatus = "Pending";
+
+    await booking.save();
 
     res.json({
       success: true,
