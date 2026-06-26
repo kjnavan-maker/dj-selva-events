@@ -749,25 +749,25 @@ useEffect(() => {
     )}
 
     {!isEventsLoading && events.length === 0 && (
-      <div className="rounded-[2rem] border border-orange-300/20 bg-orange-300/10 p-8 text-center">
-        <Calendar className="mx-auto text-orange-300" size={48} />
+  <div className="rounded-[2rem] border border-orange-300/20 bg-orange-300/10 p-8 text-center">
+    <Calendar className="mx-auto text-orange-300" size={48} />
 
-        <h3 className="mt-4 text-2xl font-black text-orange-300">
-          No upcoming events
-        </h3>
+    <h3 className="mt-4 text-2xl font-black text-orange-300">
+      No upcoming events
+    </h3>
 
-        <p className="mt-3 text-white/60">
-          Admin create pannura events inga show aagum.
-        </p>
+    <p className="mt-3 text-white/60">
+      New DJ Selva public events will be updated soon. Stay tuned for upcoming shows.
+    </p>
 
-        <Link
-          to="/admin/events"
-          className="mt-6 inline-block rounded-full bg-white px-7 py-3 font-black text-black transition hover:bg-cyan-300"
-        >
-          Create Event
-        </Link>
-      </div>
-    )}
+    <Link
+      to="/booking"
+      className="mt-6 inline-block rounded-full bg-white px-7 py-3 font-black text-black transition hover:bg-cyan-300"
+    >
+      Book DJ Selva
+    </Link>
+  </div>
+)}
 
     {!isEventsLoading && events.length > 0 && (
       <div className="grid gap-6 md:grid-cols-3">

@@ -1,4 +1,5 @@
 const Event = require("../models/Event");
+const mongoose = require("mongoose");
 
 const generateEventId = () => {
   return `EVT-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -91,9 +92,17 @@ const getEvents = async (req, res) => {
 // GET /api/events/:eventId
 const getEventById = async (req, res) => {
   try {
-    const eventId = req.params.eventId.toUpperCase();
+    const eventId = req.params.eventId;
 
-    const event = await Event.findOne({ eventId });
+    const searchConditions = [{ eventId: eventId.toUpperCase() }];
+
+    if (mongoose.Types.ObjectId.isValid(eventId)) {
+      searchConditions.push({ _id: eventId });
+    }
+
+    const event = await Event.findOne({
+      $or: searchConditions,
+    });
 
     if (!event) {
       return res.status(404).json({
@@ -118,7 +127,7 @@ const getEventById = async (req, res) => {
 // PUT /api/events/:eventId
 const updateEvent = async (req, res) => {
   try {
-    const eventId = req.params.eventId.toUpperCase();
+    const eventId = req.params.eventId;
 
     const {
       eventName,
@@ -136,7 +145,15 @@ const updateEvent = async (req, res) => {
       status,
     } = req.body;
 
-    const event = await Event.findOne({ eventId });
+    const searchConditions = [{ eventId: eventId.toUpperCase() }];
+
+    if (mongoose.Types.ObjectId.isValid(eventId)) {
+      searchConditions.push({ _id: eventId });
+    }
+
+    const event = await Event.findOne({
+      $or: searchConditions,
+    });
 
     if (!event) {
       return res.status(404).json({
@@ -178,9 +195,17 @@ const updateEvent = async (req, res) => {
 // DELETE /api/events/:eventId
 const deleteEvent = async (req, res) => {
   try {
-    const eventId = req.params.eventId.toUpperCase();
+    const eventId = req.params.eventId;
 
-    const event = await Event.findOneAndDelete({ eventId });
+    const searchConditions = [{ eventId: eventId.toUpperCase() }];
+
+    if (mongoose.Types.ObjectId.isValid(eventId)) {
+      searchConditions.push({ _id: eventId });
+    }
+
+    const event = await Event.findOneAndDelete({
+      $or: searchConditions,
+    });
 
     if (!event) {
       return res.status(404).json({
