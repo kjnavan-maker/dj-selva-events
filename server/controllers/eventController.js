@@ -14,6 +14,7 @@ const createEvent = async (req, res) => {
       venue,
       city,
       capacity,
+      eventImage,
       normalPrice,
       vipPrice,
       couplePrice,
@@ -45,6 +46,7 @@ const createEvent = async (req, res) => {
       venue,
       city: city || "",
       capacity: Number(capacity) || 150,
+      eventImage: eventImage || "",
       normalPrice: Number(normalPrice) || 2500,
       vipPrice: Number(vipPrice) || 5000,
       couplePrice: Number(couplePrice) || 7000,
@@ -118,18 +120,23 @@ const updateEvent = async (req, res) => {
   try {
     const eventId = req.params.eventId.toUpperCase();
 
-    const event = await Event.findOneAndUpdate(
-      { eventId },
-      {
-        ...req.body,
-        capacity: Number(req.body.capacity) || 150,
-        normalPrice: Number(req.body.normalPrice) || 2500,
-        vipPrice: Number(req.body.vipPrice) || 5000,
-        couplePrice: Number(req.body.couplePrice) || 7000,
-        backstagePrice: Number(req.body.backstagePrice) || 12000,
-      },
-      { returnDocument: "after" }
-    );
+    const {
+      eventName,
+      eventDate,
+      eventTime,
+      venue,
+      city,
+      capacity,
+      eventImage,
+      normalPrice,
+      vipPrice,
+      couplePrice,
+      backstagePrice,
+      description,
+      status,
+    } = req.body;
+
+    const event = await Event.findOne({ eventId });
 
     if (!event) {
       return res.status(404).json({
@@ -137,6 +144,22 @@ const updateEvent = async (req, res) => {
         message: "Event not found",
       });
     }
+
+    event.eventName = eventName || event.eventName;
+    event.eventDate = eventDate || event.eventDate;
+    event.eventTime = eventTime || event.eventTime;
+    event.venue = venue || event.venue;
+    event.city = city || "";
+    event.capacity = Number(capacity) || 150;
+    event.eventImage = eventImage || "";
+    event.normalPrice = Number(normalPrice) || 2500;
+    event.vipPrice = Number(vipPrice) || 5000;
+    event.couplePrice = Number(couplePrice) || 7000;
+    event.backstagePrice = Number(backstagePrice) || 12000;
+    event.description = description || "";
+    event.status = status || "Upcoming";
+
+    await event.save();
 
     res.json({
       success: true,

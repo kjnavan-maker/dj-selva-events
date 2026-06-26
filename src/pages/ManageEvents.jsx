@@ -13,6 +13,7 @@ import {
   RefreshCw,
   Save,
   X,
+  ImagePlus,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -25,6 +26,7 @@ const emptyForm = {
   venue: "",
   city: "",
   capacity: 150,
+  eventImage: "",
   normalPrice: 2500,
   vipPrice: 5000,
   couplePrice: 7000,
@@ -70,6 +72,40 @@ function ManageEvents() {
     setFormData((previous) => ({
       ...previous,
       [name]: value,
+    }));
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file");
+      return;
+    }
+
+    if (file.size > 800 * 1024) {
+      alert("Image size must be below 800KB. Please compress the image.");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setFormData((previous) => ({
+        ...previous,
+        eventImage: reader.result,
+      }));
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setFormData((previous) => ({
+      ...previous,
+      eventImage: "",
     }));
   };
 
@@ -123,6 +159,7 @@ function ManageEvents() {
       venue: eventItem.venue || "",
       city: eventItem.city || "",
       capacity: eventItem.capacity || 150,
+      eventImage: eventItem.eventImage || "",
       normalPrice: eventItem.normalPrice || 2500,
       vipPrice: eventItem.vipPrice || 5000,
       couplePrice: eventItem.couplePrice || 7000,
@@ -208,7 +245,8 @@ function ManageEvents() {
           </h1>
 
           <p className="mt-4 max-w-2xl text-white/60">
-            Create, update, and delete DJ Selva public ticket events.
+            Create, update, and delete DJ Selva public ticket events. Upload
+            event poster/photo to show on the website upcoming events section.
           </p>
         </motion.div>
 
@@ -238,6 +276,47 @@ function ManageEvents() {
             <Input label="Event Time" name="eventTime" type="time" value={formData.eventTime} onChange={handleChange} required />
             <Input label="Venue" name="venue" value={formData.venue} onChange={handleChange} required />
             <Input label="City" name="city" value={formData.city} onChange={handleChange} />
+
+            <label className="mt-4 block">
+              <span className="mb-2 block text-sm font-bold text-white/60">
+                Event Image / Poster
+              </span>
+
+              <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
+                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-cyan-300 px-5 py-3 text-sm font-black text-black transition hover:bg-white">
+                  <ImagePlus size={18} />
+                  Choose Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+
+                <p className="mt-3 text-center text-xs text-white/45">
+                  Recommended: 16:9 image, below 800KB.
+                </p>
+              </div>
+            </label>
+
+            {formData.eventImage && (
+              <div className="mt-4 overflow-hidden rounded-2xl border border-cyan-300/20 bg-black/40">
+                <img
+                  src={formData.eventImage}
+                  alt="Event Preview"
+                  className="h-44 w-full object-cover"
+                />
+
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="w-full bg-red-400/10 px-4 py-3 text-sm font-black text-red-300 transition hover:bg-red-400 hover:text-white"
+                >
+                  Remove Image
+                </button>
+              </div>
+            )}
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Input label="Capacity" name="capacity" type="number" value={formData.capacity} onChange={handleChange} />
@@ -308,60 +387,74 @@ function ManageEvents() {
               {events.map((eventItem) => (
                 <div
                   key={eventItem._id || eventItem.eventId}
-                  className="rounded-[1.5rem] border border-white/10 bg-black/35 p-5"
+                  className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/35"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-black text-cyan-300">
-                        {eventItem.eventId}
-                      </p>
-
-                      <h3 className="mt-2 text-2xl font-black">
-                        {eventItem.eventName}
-                      </h3>
-
-                      <div className="mt-4 grid gap-2 text-sm text-white/60 sm:grid-cols-2">
-                        <Info icon={<Calendar size={16} />} text={eventItem.eventDate} />
-                        <Info icon={<Clock size={16} />} text={eventItem.eventTime} />
-                        <Info icon={<MapPin size={16} />} text={`${eventItem.venue}, ${eventItem.city || ""}`} />
-                        <Info icon={<Users size={16} />} text={`Capacity: ${eventItem.capacity}`} />
-                      </div>
+                  {eventItem.eventImage ? (
+                    <img
+                      src={eventItem.eventImage}
+                      alt={eventItem.eventName}
+                      className="h-56 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-44 items-center justify-center bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/25">
+                      <ImagePlus className="text-cyan-300/70" size={50} />
                     </div>
-
-                    <span className="rounded-full bg-cyan-300/10 px-4 py-2 text-xs font-black text-cyan-300">
-                      {eventItem.status}
-                    </span>
-                  </div>
-
-                  <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
-                    <Price label="Normal" value={eventItem.normalPrice} />
-                    <Price label="VIP" value={eventItem.vipPrice} />
-                    <Price label="Couple" value={eventItem.couplePrice} />
-                    <Price label="Backstage" value={eventItem.backstagePrice} />
-                  </div>
-
-                  {eventItem.description && (
-                    <p className="mt-4 text-sm text-white/55">
-                      {eventItem.description}
-                    </p>
                   )}
 
-                  <div className="mt-5 flex flex-wrap gap-3">
-                    <button
-                      onClick={() => handleEdit(eventItem)}
-                      className="flex items-center gap-2 rounded-full bg-purple-400/10 px-5 py-3 text-sm font-black text-purple-300 transition hover:bg-purple-400 hover:text-white"
-                    >
-                      <Edit size={16} />
-                      Edit
-                    </button>
+                  <div className="p-5">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-black text-cyan-300">
+                          {eventItem.eventId}
+                        </p>
 
-                    <button
-                      onClick={() => handleDelete(eventItem.eventId)}
-                      className="flex items-center gap-2 rounded-full bg-red-400/10 px-5 py-3 text-sm font-black text-red-300 transition hover:bg-red-400 hover:text-white"
-                    >
-                      <Trash2 size={16} />
-                      Delete
-                    </button>
+                        <h3 className="mt-2 text-2xl font-black">
+                          {eventItem.eventName}
+                        </h3>
+
+                        <div className="mt-4 grid gap-2 text-sm text-white/60 sm:grid-cols-2">
+                          <Info icon={<Calendar size={16} />} text={eventItem.eventDate} />
+                          <Info icon={<Clock size={16} />} text={eventItem.eventTime} />
+                          <Info icon={<MapPin size={16} />} text={`${eventItem.venue}, ${eventItem.city || ""}`} />
+                          <Info icon={<Users size={16} />} text={`Capacity: ${eventItem.capacity}`} />
+                        </div>
+                      </div>
+
+                      <span className="rounded-full bg-cyan-300/10 px-4 py-2 text-xs font-black text-cyan-300">
+                        {eventItem.status}
+                      </span>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                      <Price label="Normal" value={eventItem.normalPrice} />
+                      <Price label="VIP" value={eventItem.vipPrice} />
+                      <Price label="Couple" value={eventItem.couplePrice} />
+                      <Price label="Backstage" value={eventItem.backstagePrice} />
+                    </div>
+
+                    {eventItem.description && (
+                      <p className="mt-4 text-sm text-white/55">
+                        {eventItem.description}
+                      </p>
+                    )}
+
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <button
+                        onClick={() => handleEdit(eventItem)}
+                        className="flex items-center gap-2 rounded-full bg-purple-400/10 px-5 py-3 text-sm font-black text-purple-300 transition hover:bg-purple-400 hover:text-white"
+                      >
+                        <Edit size={16} />
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(eventItem.eventId)}
+                        className="flex items-center gap-2 rounded-full bg-red-400/10 px-5 py-3 text-sm font-black text-red-300 transition hover:bg-red-400 hover:text-white"
+                      >
+                        <Trash2 size={16} />
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

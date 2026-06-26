@@ -14,6 +14,7 @@ import {
   Eye,
   LogOut,
   RefreshCw,
+  ImagePlus,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -451,6 +452,33 @@ function AdminDashboard() {
                 <Music size={20} />
               </Link>
             </motion.div>
+
+            {/* Gallery Management */}
+<motion.div
+  initial={{ opacity: 0, x: 35 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  viewport={{ once: true, amount: 0.25 }}
+  transition={{ duration: 0.7 }}
+  className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6 shadow-[0_0_45px_rgba(34,211,238,0.15)] backdrop-blur-2xl"
+>
+  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black/45 text-cyan-300">
+    <ImagePlus size={34} />
+  </div>
+
+  <h2 className="mt-6 text-3xl font-black">Gallery</h2>
+
+  <p className="mt-3 text-white/60">
+    Upload DJ Selva event photos and add video links for the public gallery page.
+  </p>
+
+  <Link
+    to="/admin/gallery"
+    className="mt-6 flex items-center justify-center gap-2 rounded-full bg-white px-6 py-4 font-black text-black transition hover:bg-cyan-300"
+  >
+    Manage Gallery
+    <ImagePlus size={20} />
+  </Link>
+</motion.div>
 
             <motion.div
               initial={{ opacity: 0, x: 35 }}

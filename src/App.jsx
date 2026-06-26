@@ -12,6 +12,7 @@ import AdminLogin from "./pages/AdminLogin";
 import ManageEvents from "./pages/ManageEvents";
 import ManageBookings from "./pages/ManageBookings";
 import ManagePrivateBookings from "./pages/ManagePrivateBookings";
+import ManageGallery from "./pages/ManageGallery";
 import AdminReports from "./pages/AdminReports";
 
 function ProtectedAdminRoute({ children }) {
@@ -93,6 +94,15 @@ function App() {
             </ProtectedAdminRoute>
           }
         />
+
+        <Route
+  path="/admin/gallery"
+  element={
+    <ProtectedAdminRoute>
+      <ManageGallery />
+    </ProtectedAdminRoute>
+  }
+/>
 
         {/* Wrong URL fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

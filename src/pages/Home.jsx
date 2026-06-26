@@ -13,7 +13,11 @@ import {
   ArrowRight,
   Menu,
   X,
+  Camera,
+  PlayCircle,
 } from "lucide-react";
+
+const API_URL = "http://localhost:5000/api";
 
 function Home() {
   const headphones = useMemo(
@@ -26,6 +30,10 @@ function Home() {
 
   const [activeHeadphone, setActiveHeadphone] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const [events, setEvents] = useState([]);
+  const [isEventsLoading, setIsEventsLoading] = useState(true);
+  const [galleryPreview, setGalleryPreview] = useState([]);
 
   useEffect(() => {
     headphones.forEach((src) => {
@@ -61,6 +69,49 @@ function Home() {
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
+
+  useEffect(() => {
+  const fetchEvents = async () => {
+    try {
+      setIsEventsLoading(true);
+
+      const response = await fetch(`${API_URL}/events`);
+      const data = await response.json();
+
+      if (data.success) {
+        const upcomingEvents = (data.events || []).filter(
+          (eventItem) =>
+            eventItem.status === "Upcoming" || eventItem.status === "Active"
+        );
+
+        setEvents(upcomingEvents);
+      }
+    } catch (error) {
+      console.error("Home events fetch error:", error);
+    } finally {
+      setIsEventsLoading(false);
+    }
+  };
+
+  fetchEvents();
+}, []);
+
+useEffect(() => {
+  const fetchGalleryPreview = async () => {
+    try {
+      const response = await fetch(`${API_URL}/gallery/active`);
+      const data = await response.json();
+
+      if (data.success) {
+        setGalleryPreview((data.galleryItems || []).slice(0, 6));
+      }
+    } catch (error) {
+      console.error("Home gallery preview fetch error:", error);
+    }
+  };
+
+  fetchGalleryPreview();
+}, []);
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#030712] text-white">
@@ -486,44 +537,39 @@ function Home() {
       </section>
 
       {/* Highlights */}
-      <section id="highlights" className="px-5 py-20 sm:px-6 sm:py-24">
-        <div className="mx-auto max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 35 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 0.7 }}
-            className="mb-12 text-center"
-          >
-            <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-cyan-300">
-              Highlights
-            </p>
-            <h2 className="text-3xl font-black sm:text-4xl md:text-6xl">
-              Built for unforgettable nights.
-            </h2>
-          </motion.div>
+<SectionWrapper id="highlights">
+  <SectionHeading
+    label="Highlights"
+    title="Built for unforgettable nights."
+    text="A clean event experience with live shows, QR ticket booking, and professional event presentation."
+  />
 
-          <div className="grid gap-5 md:grid-cols-3">
-            <HighlightCard
-              icon={<Users />}
-              title="Live Events"
-              text="Premium club nights, parties, weddings, and private celebrations."
-            />
+  <div className="grid gap-5 md:grid-cols-3">
+    <HighlightImageCard
+      image="/highlight-live-event.jpg"
+      icon={<Users size={24} />}
+      title="Live Events"
+      text="Premium club nights, parties, weddings, and private celebrations with powerful sound and lights."
+    />
 
-            <HighlightCard
-              icon={<Ticket />}
-              title="QR Ticket Booking"
-              text="Modern digital ticketing concept with QR entry experience."
-            />
+    <HighlightImageCard
+      image="/highlight-qr-booking.jpg"
+      icon={<Ticket size={24} />}
+      title="QR Ticket Booking"
+      text="Customers can reserve tickets online and use QR ticket verification for smooth event entry."
+    />
 
-            <HighlightCard
-              icon={<ShieldCheck />}
-              title="Professional Experience"
-              text="Clean booking flow, trusted event presentation, and client-ready design."
-            />
-          </div>
-        </div>
-      </section>
+    <HighlightImageCard
+      image="/highlight-professional.jpg"
+      icon={<ShieldCheck size={24} />}
+      title="Professional Experience"
+      text="Clean booking flow, trusted event presentation, and client-ready service experience."
+    />
+  </div>
+</SectionWrapper>
+
+
+
 
       {/* Event Section */}
       <section id="events" className="px-5 py-20 sm:px-6 sm:py-24">
@@ -601,15 +647,54 @@ function Home() {
           </motion.div>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <ServiceCard title="Club Events" icon="🎧" />
-            <ServiceCard title="Wedding DJ" icon="💍" />
-            <ServiceCard title="Birthday Parties" icon="🎉" />
-            <ServiceCard title="Private Shows" icon="✨" />
-            <ServiceCard title="Corporate Events" icon="🏢" />
-            <ServiceCard title="Campus Events" icon="🎓" />
-            <ServiceCard title="Sound Setup" icon="🔊" />
-            <ServiceCard title="Lighting Setup" icon="💡" />
-          </div>
+  <ServiceImageCard
+    image="/service-club-events.jpg"
+    title="Club Events"
+    text="High-energy DJ nights with crowd interaction and premium sound."
+  />
+
+  <ServiceImageCard
+    image="/service-wedding-dj.jpg"
+    title="Wedding DJ"
+    text="Elegant wedding music setup for receptions and family celebrations."
+  />
+
+  <ServiceImageCard
+    image="/service-birthday-party.jpg"
+    title="Birthday Parties"
+    text="Fun party music, lights, and custom playlists for every age group."
+  />
+
+  <ServiceImageCard
+    image="/service-private-show.jpg"
+    title="Private Shows"
+    text="Private DJ performance for house parties and special celebrations."
+  />
+
+  <ServiceImageCard
+    image="/service-corporate-event.jpg"
+    title="Corporate Events"
+    text="Professional music and sound setup for company functions."
+  />
+
+  <ServiceImageCard
+    image="/service-campus-event.jpg"
+    title="Campus Events"
+    text="Energetic DJ setup for college, school, and youth events."
+  />
+
+  <ServiceImageCard
+    image="/service-sound-setup.jpg"
+    title="Sound Setup"
+    text="Clear and powerful sound system setup for indoor and outdoor events."
+  />
+
+  <ServiceImageCard
+    image="/service-lighting-setup.jpg"
+    title="Lighting Setup"
+    text="Colorful stage lighting to create a premium event atmosphere."
+  />
+</div>
 
           <div className="mt-10 text-center">
             <Link
@@ -623,95 +708,141 @@ function Home() {
       </section>
 
       {/* Featured Events Section */}
-      <section id="featured-events" className="px-5 py-20 sm:px-6 sm:py-24">
-        <div className="mx-auto max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 35 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7 }}
-            className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end"
-          >
-            <div>
-              <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-purple-300">
-                Upcoming Events
-              </p>
-              <h2 className="text-3xl font-black sm:text-4xl md:text-6xl">
-                Feel the next beat live.
-              </h2>
-            </div>
+<section id="featured-events" className="px-5 py-20 sm:px-6 sm:py-24">
+  <div className="mx-auto max-w-7xl">
+    <motion.div
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.7 }}
+      className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end"
+    >
+      <div>
+        <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-purple-300">
+          Upcoming Events
+        </p>
 
-            <Link
-              to="/booking"
-              className="w-fit rounded-full border border-white/15 bg-white/[0.05] px-7 py-3 font-bold text-white transition hover:bg-white hover:text-black"
-            >
-              Book Tickets
-            </Link>
-          </motion.div>
+        <h2 className="text-3xl font-black sm:text-4xl md:text-6xl">
+          Feel the next beat live.
+        </h2>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            <EventCard
-              title="Neon Night 2026"
-              date="19 June 2026"
-              venue="Jaffna"
-              price="From Rs. 2,500"
-              tag="Live Soon"
-            />
+        <p className="mt-5 max-w-2xl text-white/60">
+          Admin create pannura public events inga automatic ah image oda show aagum.
+        </p>
+      </div>
 
-            <EventCard
-              title="Bass Drop Party"
-              date="05 July 2026"
-              venue="Colombo"
-              price="From Rs. 3,000"
-              tag="Booking Open"
-            />
+      <Link
+        to="/booking"
+        className="w-fit rounded-full border border-white/15 bg-white/[0.05] px-7 py-3 font-bold text-white transition hover:bg-white hover:text-black"
+      >
+        Book Tickets
+      </Link>
+    </motion.div>
 
-            <EventCard
-              title="Glow Festival"
-              date="22 August 2026"
-              venue="Kandy"
-              price="From Rs. 4,000"
-              tag="Limited"
-            />
-          </div>
-        </div>
-      </section>
+    {isEventsLoading && (
+      <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-8 text-center">
+        <Calendar className="mx-auto animate-pulse text-cyan-300" size={48} />
+        <h3 className="mt-4 text-2xl font-black text-cyan-300">
+          Loading events...
+        </h3>
+      </div>
+    )}
+
+    {!isEventsLoading && events.length === 0 && (
+      <div className="rounded-[2rem] border border-orange-300/20 bg-orange-300/10 p-8 text-center">
+        <Calendar className="mx-auto text-orange-300" size={48} />
+
+        <h3 className="mt-4 text-2xl font-black text-orange-300">
+          No upcoming events
+        </h3>
+
+        <p className="mt-3 text-white/60">
+          Admin create pannura events inga show aagum.
+        </p>
+
+        <Link
+          to="/admin/events"
+          className="mt-6 inline-block rounded-full bg-white px-7 py-3 font-black text-black transition hover:bg-cyan-300"
+        >
+          Create Event
+        </Link>
+      </div>
+    )}
+
+    {!isEventsLoading && events.length > 0 && (
+      <div className="grid gap-6 md:grid-cols-3">
+        {events.map((eventItem) => (
+          <EventCard
+            key={eventItem._id || eventItem.eventId}
+            image={eventItem.eventImage}
+            title={eventItem.eventName}
+            date={eventItem.eventDate}
+            venue={`${eventItem.venue || ""}${eventItem.city ? `, ${eventItem.city}` : ""}`}
+            price={`From Rs. ${Number(eventItem.normalPrice || 0).toLocaleString()}`}
+            tag={eventItem.status}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+</section>
 
       {/* Gallery Preview */}
-      <section id="gallery" className="px-5 py-20 sm:px-6 sm:py-24">
-        <div className="mx-auto max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 35 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7 }}
-            className="mb-12 text-center"
-          >
-            <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-cyan-300">
-              Gallery
-            </p>
-            <h2 className="text-3xl font-black sm:text-4xl md:text-6xl">
-              Moments that move the crowd.
-            </h2>
-          </motion.div>
+<section id="gallery-preview" className="px-5 py-20 sm:px-6 sm:py-24">
+  <div className="mx-auto max-w-7xl">
+    <motion.div
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.7 }}
+      className="mb-12 text-center"
+    >
+      <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-cyan-300">
+        Gallery
+      </p>
 
-          <div className="grid gap-5 md:grid-cols-4">
-            <GalleryCard label="DJ Performance" />
-            <GalleryCard label="Crowd Energy" />
-            <GalleryCard label="Stage Lights" />
-            <GalleryCard label="Private Event" />
-          </div>
+      <h2 className="text-3xl font-black sm:text-4xl md:text-6xl">
+        Real moments. Real energy.
+      </h2>
 
-          <div className="mt-10 text-center">
-            <Link
-              to="/gallery"
-              className="inline-block rounded-full bg-white px-8 py-4 font-black text-black transition hover:bg-cyan-300"
-            >
-              View Full Gallery
-            </Link>
-          </div>
-        </div>
-      </section>
+      <p className="mx-auto mt-5 max-w-2xl text-white/60">
+        Latest DJ Selva photos and video highlights uploaded by admin.
+      </p>
+    </motion.div>
+
+    {galleryPreview.length === 0 ? (
+      <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-8 text-center backdrop-blur-2xl">
+        <Camera className="mx-auto text-cyan-300" size={52} />
+
+        <h3 className="mt-4 text-2xl font-black">No gallery items yet</h3>
+
+        <p className="mt-3 text-white/60">
+          Admin upload pannura active photos/videos inga show aagum.
+        </p>
+      </div>
+    ) : (
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {galleryPreview.map((item, index) => (
+          <HomeGalleryCard
+            key={item._id || item.galleryId}
+            item={item}
+            index={index}
+          />
+        ))}
+      </div>
+    )}
+
+    <div className="mt-10 text-center">
+      <Link
+        to="/gallery"
+        className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-black text-black transition hover:bg-cyan-300"
+      >
+        View Full Gallery
+        <ArrowRight size={20} />
+      </Link>
+    </div>
+  </div>
+</section>
 
       {/* Booking CTA */}
       <section id="booking" className="px-5 py-20 sm:px-6 sm:py-24">
@@ -818,25 +949,95 @@ function Home() {
   );
 }
 
-function HighlightCard({ icon, title, text }) {
+function HighlightImageCard({ image, icon, title, text }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      initial={{ opacity: 0, y: 40, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      whileHover={{
-        y: -10,
-        scale: 1.03,
-      }}
-      className="group rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40 hover:shadow-[0_0_45px_rgba(34,211,238,0.18)] sm:p-7"
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.65, ease: "easeOut" }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40 hover:shadow-[0_0_45px_rgba(34,211,238,0.16)]"
     >
-      <div className="mb-5 flex h-13 w-13 items-center justify-center rounded-2xl bg-cyan-300/10 text-cyan-300 transition group-hover:scale-110 group-hover:bg-cyan-300/20">
-        {icon}
+      <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/25 sm:h-56">
+        <img
+          src={image}
+          alt={title}
+          className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b101c] via-[#0b101c]/35 to-transparent" />
+
+        <div className="absolute left-5 top-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/25 bg-black/60 text-cyan-300 backdrop-blur-xl shadow-[0_0_25px_rgba(34,211,238,0.18)]">
+          {icon}
+        </div>
+
+        <div className="absolute bottom-5 left-5 right-5">
+          <p className="text-xs font-black uppercase tracking-[0.3em] text-cyan-300">
+            DJ Selva
+          </p>
+          <h3 className="mt-1 text-2xl font-black text-white">{title}</h3>
+        </div>
       </div>
 
-      <h3 className="text-xl font-black sm:text-2xl">{title}</h3>
-      <p className="mt-3 leading-relaxed text-white/60">{text}</p>
+      <div className="p-6 sm:p-7">
+        <p className="leading-relaxed text-white/60">{text}</p>
+
+        <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
+          <span className="text-sm font-bold text-white/45">
+            Premium Feature
+          </span>
+
+          <span className="rounded-full bg-cyan-300/10 px-4 py-2 text-xs font-black text-cyan-300">
+            View
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function SectionWrapper({ id, children }) {
+  return (
+    <section
+      id={id}
+      className="scroll-mt-28 px-5 py-14 sm:px-6 sm:py-16 lg:py-20"
+    >
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </section>
+  );
+}
+
+function SectionHeading({ label, title, text, align = "center" }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.7 }}
+      className={`mb-10 ${
+        align === "center"
+          ? "mx-auto max-w-4xl text-center"
+          : "max-w-3xl text-left"
+      }`}
+    >
+      <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-cyan-300">
+        {label}
+      </p>
+
+      <h2 className="text-3xl font-black leading-tight tracking-[-0.035em] sm:text-4xl md:text-5xl lg:text-6xl">
+        {title}
+      </h2>
+
+      {text && (
+        <p
+          className={`mt-4 text-base leading-relaxed text-white/60 sm:text-lg ${
+            align === "center" ? "mx-auto max-w-2xl" : "max-w-2xl"
+          }`}
+        >
+          {text}
+        </p>
+      )}
     </motion.div>
   );
 }
@@ -883,7 +1084,41 @@ function ServiceCard({ icon, title }) {
   );
 }
 
-function EventCard({ title, date, venue, price, tag }) {
+function ServiceImageCard({ image, title, text }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.55 }}
+      whileHover={{ y: -7, scale: 1.02 }}
+      className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
+    >
+      <div className="relative h-44 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/25">
+        <img
+          src={image}
+          alt={title}
+          className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b101c] via-[#0b101c]/40 to-transparent" />
+
+        <div className="absolute bottom-4 left-4 right-4">
+          <p className="text-xs font-black uppercase tracking-[0.25em] text-cyan-300">
+            DJ Service
+          </p>
+          <h3 className="mt-1 text-xl font-black text-white">{title}</h3>
+        </div>
+      </div>
+
+      <div className="p-5">
+        <p className="text-sm leading-relaxed text-white/60">{text}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+function EventCard({ image, title, date, venue, price, tag }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 45 }}
@@ -894,29 +1129,50 @@ function EventCard({ title, date, venue, price, tag }) {
       className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.28)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.35),transparent_35%)]" />
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border-[18px] border-cyan-300/70 bg-black shadow-[0_0_45px_rgba(34,211,238,0.4)]"
-        />
+        {image ? (
+          <img
+            src={image}
+            alt={title}
+            className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.35),transparent_35%)]" />
+
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+              className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border-[18px] border-cyan-300/70 bg-black shadow-[0_0_45px_rgba(34,211,238,0.4)]"
+            />
+          </>
+        )}
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b101c] via-[#0b101c]/35 to-transparent" />
+
         <div className="absolute left-5 top-5 rounded-full bg-black/60 px-4 py-2 text-xs font-black text-cyan-300 backdrop-blur-xl">
           {tag}
+        </div>
+
+        <div className="absolute bottom-5 left-5 right-5">
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-300">
+            DJ Selva Event
+          </p>
+          <h3 className="mt-1 text-2xl font-black text-white">{title}</h3>
         </div>
       </div>
 
       <div className="p-6">
-        <h3 className="text-2xl font-black">{title}</h3>
-
-        <div className="mt-5 space-y-3 text-sm text-white/65">
+        <div className="space-y-3 text-sm text-white/65">
           <p className="flex items-center gap-2">
             <Calendar size={16} className="text-cyan-300" />
             {date}
           </p>
+
           <p className="flex items-center gap-2">
             <MapPin size={16} className="text-purple-300" />
             {venue}
           </p>
+
           <p className="flex items-center gap-2">
             <Ticket size={16} className="text-cyan-300" />
             {price}
@@ -937,6 +1193,57 @@ function EventCard({ title, date, venue, price, tag }) {
           >
             Details
           </Link>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function HomeGalleryCard({ item, index }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.6, delay: index * 0.05 }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
+    >
+      <div className="relative h-60 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30">
+        {item.imageData ? (
+          <img
+            src={item.imageData}
+            alt={item.title}
+            className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <PlayCircle className="text-cyan-300" size={70} />
+          </div>
+        )}
+
+        {item.mediaType === "Video" && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/25">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-black shadow-[0_0_35px_rgba(255,255,255,0.35)]">
+              <PlayCircle size={38} />
+            </div>
+          </div>
+        )}
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b101c] via-[#0b101c]/30 to-transparent" />
+
+        <div className="absolute left-5 top-5 rounded-full bg-black/60 px-4 py-2 text-xs font-black text-cyan-300 backdrop-blur-xl">
+          {item.mediaType}
+        </div>
+
+        <div className="absolute bottom-5 left-5 right-5">
+          <p className="text-xs font-black uppercase tracking-[0.25em] text-cyan-300">
+            {item.category}
+          </p>
+
+          <h3 className="mt-1 text-2xl font-black text-white">
+            {item.title}
+          </h3>
         </div>
       </div>
     </motion.div>

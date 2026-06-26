@@ -7,7 +7,6 @@ dotenv.config();
 
 const app = express();
 
-// CORS setup
 app.use(
   cors({
     origin: [
@@ -19,33 +18,24 @@ app.use(
   })
 );
 
-// Middleware
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Database connection
 connectDB();
 
-// Default API route
 app.get("/", (req, res) => {
-  res.json({
-    message: "DJ Selva Events API is running",
-  });
+  res.json({ message: "DJ Selva Events API is running" });
 });
 
-// Health check route
 app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    message: "Backend server is healthy",
-  });
+  res.json({ success: true, message: "Backend server is healthy" });
 });
 
-// API Routes
 app.use("/api/bookings", require("./routes/bookingRoutes"));
 app.use("/api/private-bookings", require("./routes/privateBookingRoutes"));
 app.use("/api/events", require("./routes/eventRoutes"));
+app.use("/api/gallery", require("./routes/galleryRoutes"));
 
-// 404 route
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -53,7 +43,6 @@ app.use((req, res) => {
   });
 });
 
-// Start server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
