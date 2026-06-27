@@ -872,37 +872,118 @@ function Home() {
         </motion.div>
       </section>
 
-      {/* Contact */}
-      <section id="contact" className="px-5 pb-16 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.7 }}
-          className="mx-auto max-w-7xl rounded-[2rem] border border-white/10 bg-black/45 p-8 text-center backdrop-blur-2xl"
-        >
-          <h3 className="text-2xl font-black">DJ Selva Events</h3>
-          <p className="mt-3 text-sm text-white/60 sm:text-base">
-            Jaffna, Sri Lanka | +94 77 123 4567 | hello@djselva.lk
+      {/* Footer / Contact */}
+<footer id="contact" className="px-4 pb-10 pt-8 sm:px-6">
+  <motion.div
+    initial={{ opacity: 0, y: 18 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.35 }}
+    transition={{ duration: 0.6 }}
+    className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-black/50 backdrop-blur-2xl"
+  >
+    <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:p-10">
+      <div>
+        <div className="flex items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-cyan-300/25 bg-black shadow-[0_0_24px_rgba(34,211,238,0.22)]">
+            <img
+              src="/dj-selva-logo.png"
+              alt="DJ Selva Logo"
+              className="h-11 w-11 object-contain"
+            />
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-black">DJ Selva Events</h3>
+            <p className="mt-1 text-xs font-bold uppercase tracking-[0.32em] text-cyan-300">
+              Premium DJ Experience
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-5 max-w-md text-sm leading-relaxed text-white/60 sm:text-base">
+          Premium DJ nights, private events, weddings, club parties, sound setup,
+          lighting setup, and unforgettable live music experiences in Sri Lanka.
+        </p>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            to="/private-booking"
+            className="rounded-full bg-white px-6 py-3 text-sm font-black text-black transition hover:bg-cyan-300"
+          >
+            Book DJ Selva
+          </Link>
+
+          <a
+            href="https://wa.me/94771234567"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-full bg-[#22c55e] px-6 py-3 text-sm font-black text-white transition hover:scale-105"
+          >
+            <MessageCircle size={18} />
+            WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h4 className="text-lg font-black text-white">Quick Links</h4>
+
+        <div className="mt-5 flex flex-col gap-3 text-sm font-semibold text-white/60">
+          <a href="#home" className="transition hover:text-cyan-300">
+            Home
+          </a>
+          <a href="#highlights" className="transition hover:text-cyan-300">
+            Highlights
+          </a>
+          <a href="#featured-events" className="transition hover:text-cyan-300">
+            Events
+          </a>
+          <a href="#services" className="transition hover:text-cyan-300">
+            Services
+          </a>
+          <Link to="/gallery" className="transition hover:text-cyan-300">
+            Gallery
+          </Link>
+          <Link to="/contact" className="transition hover:text-cyan-300">
+            Contact
+          </Link>
+        </div>
+      </div>
+
+      <div>
+        <h4 className="text-lg font-black text-white">Contact</h4>
+
+        <div className="mt-5 space-y-3 text-sm text-white/60">
+          <p>
+            <span className="font-bold text-cyan-300">Location:</span> Jaffna,
+            Sri Lanka
           </p>
 
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link
-              to="/contact"
-              className="rounded-full bg-white px-6 py-3 text-sm font-black text-black transition hover:bg-cyan-300"
-            >
-              Contact Page
-            </Link>
+          <p>
+            <span className="font-bold text-cyan-300">Phone:</span> +94 77 123
+            4567
+          </p>
 
-            <Link
-              to="/admin-login"
-              className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm font-bold text-white/70 transition hover:bg-white hover:text-black"
-            >
-              Admin Login
-            </Link>
-          </div>
-        </motion.div>
-      </section>
+          <p>
+            <span className="font-bold text-cyan-300">Email:</span>{" "}
+            hello@djselva.lk
+          </p>
+
+          <p>
+            <span className="font-bold text-cyan-300">Service:</span> DJ,
+            Sound, Lights, Events
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div className="border-t border-white/10 px-6 py-5 text-center sm:px-8">
+      <p className="text-xs text-white/45 sm:text-sm">
+        © {new Date().getFullYear()} DJ Selva Events. All rights reserved.
+      </p>
+    </div>
+  </motion.div>
+</footer>
 
       {/* Floating WhatsApp Button */}
       <motion.a
