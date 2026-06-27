@@ -261,7 +261,7 @@ useEffect(() => {
       {/* Hero Section */}
       <section
   id="home"
-  className="relative px-4 pb-16 pt-24 sm:px-5 sm:pb-24 sm:pt-28 lg:flex lg:min-h-screen lg:items-center lg:pt-28"
+  className="relative px-4 pb-20 pt-24 sm:px-5 sm:pb-24 sm:pt-28 lg:flex lg:min-h-screen lg:items-center lg:pt-28"
 >
         <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left Content */}
