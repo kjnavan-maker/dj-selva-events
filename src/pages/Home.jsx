@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 const API_URL = "http://localhost:5000/api";
+const API_URL = "https://dj-selva-events.onrender.com/api";
 
 function Home() {
   const headphones = useMemo(
