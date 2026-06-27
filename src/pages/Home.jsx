@@ -260,10 +260,10 @@ useEffect(() => {
 
       {/* Hero Section */}
       <section
-        id="home"
-        className="relative flex min-h-screen items-center px-4 pb-32 pt-28 sm:px-5 sm:pb-32 lg:pt-28"
-      >
-        <div className="mx-auto grid max-w-7xl items-center gap-5 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+  id="home"
+  className="relative px-4 pb-16 pt-24 sm:px-5 sm:pb-24 sm:pt-28 lg:flex lg:min-h-screen lg:items-center lg:pt-28"
+>
+        <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -280,7 +280,7 @@ useEffect(() => {
               Sri Lanka’s Premium DJ Experience
             </motion.div>
 
-            <h1 className="text-[2.35rem] font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[4.8rem] xl:text-[5.4rem]">
+            <h1 className="text-[2.45rem] font-black leading-[1.02] tracking-[-0.04em] sm:text-5xl md:text-7xl lg:text-[4.8rem] xl:text-[5.4rem]">
               Feel the
               <br />
               Beat.
@@ -297,10 +297,10 @@ useEffect(() => {
               unforgettable live music experiences with DJ Selva.
             </p>
 
-            <div className="mt-4 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap lg:justify-start">
               <Link
-                to="/booking"
-                className="group flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black transition hover:bg-cyan-300 sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                to="/booking"className="group flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                
               >
                 Book Event Ticket
                 <ArrowRight
@@ -311,7 +311,7 @@ useEffect(() => {
 
               <Link
                 to="/private-booking"
-                className="group flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                className="group flex w-full items-center justify-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-6 md:px-7 md:py-3.5 md:text-base"
               >
                 Book DJ Selva
                 <ArrowRight
@@ -321,8 +321,8 @@ useEffect(() => {
               </Link>
 
               <a
-                href="#featured-events"
-                className="rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-sm font-bold text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                href="#featured-events"className="w-full rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-center text-sm font-bold text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:w-auto sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                
               >
                 View Events
               </a>
@@ -331,7 +331,7 @@ useEffect(() => {
                 href="https://wa.me/94771234567"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 rounded-full bg-[#22c55e] px-5 py-3 text-sm font-bold text-white transition hover:scale-105 sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#22c55e] px-5 py-3 text-sm font-bold text-white transition hover:scale-105 sm:w-auto sm:px-6 md:px-7 md:py-3.5 md:text-base"
               >
                 <MessageCircle size={20} />
                 WhatsApp
@@ -398,7 +398,7 @@ useEffect(() => {
                   ease: "easeInOut",
                   delay: item.delay,
                 }}
-                className={`absolute z-20 drop-shadow-[0_0_20px_rgba(34,211,238,0.7)] ${item.className}`}
+                className={`absolute z-20 hidden drop-shadow-[0_0_20px_rgba(34,211,238,0.7)] sm:block ${item.className}`}
               >
                 {item.note}
               </motion.div>
@@ -406,7 +406,7 @@ useEffect(() => {
 
             <div className="absolute -inset-10 rounded-full bg-gradient-to-r from-cyan-400/20 via-blue-500/10 to-purple-500/20 blur-3xl sm:-inset-12" />
 
-            <div className="relative mx-auto flex h-[255px] w-[255px] items-center justify-center rounded-full border border-cyan-300/15 bg-white/[0.025] shadow-[0_0_70px_rgba(37,99,255,0.25)] backdrop-blur-2xl sm:h-[350px] sm:w-[350px] md:h-[430px] md:w-[430px] lg:h-[450px] lg:w-[450px]">
+            <div className="relative mx-auto flex h-[220px] w-[220px] items-center justify-center rounded-full border border-cyan-300/15 bg-white/[0.025] shadow-[0_0_55px_rgba(37,99,255,0.22)] backdrop-blur-2xl sm:h-[350px] sm:w-[350px] md:h-[430px] md:w-[430px] lg:h-[450px] lg:w-[450px]">
               <motion.div
                 animate={{ scale: [1, 1.04, 1], rotate: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -477,7 +477,7 @@ useEffect(() => {
                 <img
                   src={headphones[activeHeadphone]}
                   alt={`3D Headphone ${activeHeadphone + 1}`}
-                  className="max-h-[200px] w-[210px] translate-x-1 translate-y-1 object-contain drop-shadow-[0_0_50px_rgba(34,211,238,0.45)] sm:max-h-[285px] sm:w-[300px] md:max-h-[360px] md:w-[370px] lg:max-h-[375px] lg:w-[385px]"
+                  className="max-h-[175px] w-[185px] translate-x-1 translate-y-1 object-contain drop-shadow-[0_0_45px_rgba(34,211,238,0.4)] sm:max-h-[285px] sm:w-[300px] md:max-h-[360px] md:w-[370px] lg:max-h-[375px] lg:w-[385px]"
                 />
               </motion.div>
 
@@ -504,7 +504,7 @@ useEffect(() => {
                 <ArrowRight size={19} />
               </button>
 
-              <div className="absolute -bottom-4 flex items-end gap-1.5 md:-bottom-6">
+              <div className="absolute -bottom-4 hidden items-end gap-1.5 sm:flex md:-bottom-6">
                 {[34, 56, 76, 48, 92, 66, 40, 74, 54, 84, 44].map(
                   (h, i) => (
                     <motion.div
@@ -572,7 +572,7 @@ useEffect(() => {
 
 
       {/* Event Section */}
-      <section id="events" className="px-5 py-20 sm:px-6 sm:py-24">
+      <section id="events" >className="px-4 py-14 sm:px-6 sm:py-20"
         <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -726,8 +726,8 @@ useEffect(() => {
           Feel the next beat live.
         </h2>
 
-        <p className="mt-5 max-w-2xl text-white/60">
-          Admin create pannura public events inga automatic ah image oda show aagum.
+        <p className="mt-5 max-w-2xl text-white/60">Upcoming DJ Selva public events will appear here with posters, dates, venues, and ticket details.
+          
         </p>
       </div>
 
@@ -770,7 +770,7 @@ useEffect(() => {
 )}
 
     {!isEventsLoading && events.length > 0 && (
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {events.map((eventItem) => (
           <EventCard
             key={eventItem._id || eventItem.eventId}
@@ -866,7 +866,7 @@ useEffect(() => {
             private events, weddings, parties, and premium celebrations.
           </p>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
             <Link
               to="/booking"
               className="rounded-full bg-white px-7 py-4 font-black text-black transition hover:bg-cyan-300 sm:px-9"
@@ -941,9 +941,9 @@ useEffect(() => {
             ease: "easeInOut",
           },
         }}
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#22c55e] text-white shadow-[0_0_35px_rgba(34,197,94,0.55)] transition hover:scale-110 sm:bottom-6 sm:right-6 sm:h-16 sm:w-16"
+        className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#22c55e] text-white shadow-[0_0_35px_rgba(34,197,94,0.55)] transition hover:scale-110 sm:bottom-6 sm:right-6 sm:h-16 sm:w-16"
       >
-        <MessageCircle size={28} />
+        <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" />
       </motion.a>
     </div>
   );
@@ -1209,7 +1209,7 @@ function HomeGalleryCard({ item, index }) {
       whileHover={{ y: -8, scale: 1.02 }}
       className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
-      <div className="relative h-60 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30">
+      <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30 sm:h-60">
         {item.imageData ? (
           <img
             src={item.imageData}
