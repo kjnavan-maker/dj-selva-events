@@ -311,7 +311,7 @@ useEffect(() => {
 
               <Link
                 to="/private-booking"
-                className="group flex w-full items-center justify-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                className="group flex w-full items-center justify-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-6 md:px-7 md:py-3.5 md:text-base"
               >
                 Book DJ Selva
                 <ArrowRight
@@ -497,12 +497,12 @@ useEffect(() => {
               </div>
 
               <button
-                onClick={nextHeadphone}
-                className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/45 text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:right-4"
-                aria-label="Next headphone"
-              >
-                <ArrowRight size={19} />
-              </button>
+  onClick={nextHeadphone}
+  className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/45 text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:right-4"
+  aria-label="Next headphone"
+>
+  <ArrowRight size={19} />
+</button>
 
               <div className="absolute -bottom-4 hidden items-end gap-1.5 sm:flex md:-bottom-6">
                 {[34, 56, 76, 48, 92, 66, 40, 74, 54, 84, 44].map(
