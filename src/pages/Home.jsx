@@ -62,16 +62,13 @@ function Home() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, [headphones.length]);
 
-  const nextHeadphone = () => {
-    setActiveHeadphone((prev) => (prev + 1) % headphones.length);
-  };
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
 
   useEffect(() => {
-  const fetchEvents = async () => {
+    const fetchEvents = async () => {
     try {
       setIsEventsLoading(true);
 
@@ -93,11 +90,11 @@ function Home() {
     }
   };
 
-  fetchEvents();
-}, []);
+    fetchEvents();
+  }, []);
 
-useEffect(() => {
-  const fetchGalleryPreview = async () => {
+  useEffect(() => {
+    const fetchGalleryPreview = async () => {
     try {
       const response = await fetch(`${API_URL}/gallery/active`);
       const data = await response.json();
@@ -110,8 +107,8 @@ useEffect(() => {
     }
   };
 
-  fetchGalleryPreview();
-}, []);
+    fetchGalleryPreview();
+  }, []);
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#030712] text-white">
@@ -299,30 +296,22 @@ useEffect(() => {
 
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap lg:justify-start">
               <Link
-                to="/booking"className="group flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-6 md:px-7 md:py-3.5 md:text-base"
-                
+                to="/booking"
+                className="flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
               >
                 Book Event Ticket
-                <ArrowRight
-                  size={18}
-                  className="transition group-hover:translate-x-1"
-                />
               </Link>
 
               <Link
                 to="/private-booking"
-                className="group flex w-full items-center justify-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                className="flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
               >
                 Book DJ Selva
-                <ArrowRight
-                  size={18}
-                  className="transition group-hover:translate-x-1"
-                />
               </Link>
 
               <a
-                href="#featured-events"className="w-full rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-center text-sm font-bold text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:w-auto sm:px-6 md:px-7 md:py-3.5 md:text-base"
-                
+                href="#featured-events"
+                className="w-full rounded-full border border-white/15 bg-white/[0.04] px-5 py-3.5 text-center text-sm font-bold text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:w-auto sm:px-7 md:text-base"
               >
                 View Events
               </a>
@@ -331,7 +320,7 @@ useEffect(() => {
                 href="https://wa.me/94771234567"
                 target="_blank"
                 rel="noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#22c55e] px-5 py-3 text-sm font-bold text-white transition hover:scale-105 sm:w-auto sm:px-6 md:px-7 md:py-3.5 md:text-base"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#22c55e] px-5 py-3.5 text-sm font-bold text-white transition hover:scale-105 sm:w-auto sm:px-7 md:text-base"
               >
                 <MessageCircle size={20} />
                 WhatsApp
@@ -564,7 +553,7 @@ useEffect(() => {
 
 
       {/* Event Section */}
-      <section id="featured-events" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-18 lg:py-20">
+      <section id="events" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -617,7 +606,7 @@ useEffect(() => {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="px-5 py-20 sm:px-6 sm:py-24">
+      <section id="services" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -700,7 +689,7 @@ useEffect(() => {
       </section>
 
       {/* Featured Events Section */}
-<section id="featured-events" className="px-5 py-20 sm:px-6 sm:py-24">
+<section id="featured-events" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
   <div className="mx-auto max-w-7xl">
     <motion.div
       initial={{ opacity: 0, y: 35 }}
@@ -780,7 +769,7 @@ useEffect(() => {
 </section>
 
       {/* Gallery Preview */}
-<section id="gallery-preview" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-18 lg:py-20">
+<section id="gallery-preview" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
   <div className="mx-auto max-w-7xl">
     <motion.div
       initial={{ opacity: 0, y: 18 }}
@@ -837,7 +826,7 @@ useEffect(() => {
 </section>
 
       {/* Booking CTA */}
-      <section id="booking" className="px-5 py-20 sm:px-6 sm:py-24">
+      <section id="booking" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -875,7 +864,7 @@ useEffect(() => {
 
             <Link
               to="/contact"
-              className="rounded-full border border-white/15 bg-white/[0.05] px-7 py-4 font-bold text-white transition hover:bg-white hover:text-black sm:px-9"
+              className="w-full rounded-full border border-white/15 bg-white/[0.05] px-7 py-4 text-center font-bold text-white transition hover:bg-white hover:text-black sm:w-auto sm:px-9"
             >
               Contact Details
             </Link>
@@ -993,7 +982,7 @@ function SectionWrapper({ id, children }) {
   return (
     <section
       id={id}
-      className="scroll-mt-28 px-5 py-14 sm:px-6 sm:py-16 lg:py-20"
+      className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20"
     >
       <div className="mx-auto max-w-7xl">{children}</div>
     </section>
@@ -1194,7 +1183,7 @@ function EventCard({ image, title, date, venue, price, tag }) {
 function HomeGalleryCard({ item, index }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.4, delay: index * 0.03 }}
