@@ -496,14 +496,6 @@ useEffect(() => {
                 ))}
               </div>
 
-              <button
-  onClick={nextHeadphone}
-  className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/45 text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:right-4"
-  aria-label="Next headphone"
->
-  <ArrowRight size={19} />
-</button>
-
               <div className="absolute -bottom-4 hidden items-end gap-1.5 sm:flex md:-bottom-6">
                 {[34, 56, 76, 48, 92, 66, 40, 74, 54, 84, 44].map(
                   (h, i) => (
@@ -572,7 +564,7 @@ useEffect(() => {
 
 
       {/* Event Section */}
-      <section id="events" >className="px-4 py-14 sm:px-6 sm:py-20"
+      <section id="featured-events" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-18 lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -770,7 +762,7 @@ useEffect(() => {
 )}
 
     {!isEventsLoading && events.length > 0 && (
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {events.map((eventItem) => (
           <EventCard
             key={eventItem._id || eventItem.eventId}
@@ -788,10 +780,10 @@ useEffect(() => {
 </section>
 
       {/* Gallery Preview */}
-<section id="gallery-preview" className="px-5 py-20 sm:px-6 sm:py-24">
+<section id="gallery-preview" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-18 lg:py-20">
   <div className="mx-auto max-w-7xl">
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.7 }}
@@ -868,15 +860,15 @@ useEffect(() => {
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
             <Link
-              to="/booking"
-              className="rounded-full bg-white px-7 py-4 font-black text-black transition hover:bg-cyan-300 sm:px-9"
-            >
-              Book Event Ticket
-            </Link>
+  to="/booking"
+  className="flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
+>
+  Book Event Ticket
+</Link>
 
             <Link
               to="/private-booking"
-              className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-7 py-4 font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:px-9"
+              className="flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
             >
               Book DJ Selva
             </Link>
@@ -894,7 +886,7 @@ useEffect(() => {
       {/* Contact */}
       <section id="contact" className="px-5 pb-16 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.7 }}
@@ -956,7 +948,7 @@ function HighlightImageCard({ image, icon, title, text }) {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.65, ease: "easeOut" }}
-      whileHover={{ y: -8, scale: 1.02 }}
+      whileHover={{ y: -4, scale: 1.01 }}
       className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40 hover:shadow-[0_0_45px_rgba(34,211,238,0.16)]"
     >
       <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/25 sm:h-56">
@@ -1011,7 +1003,7 @@ function SectionWrapper({ id, children }) {
 function SectionHeading({ label, title, text, align = "center" }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.7 }}
@@ -1069,7 +1061,7 @@ function TicketRow({ name, price }) {
 function ServiceCard({ icon, title }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.55 }}
@@ -1087,7 +1079,7 @@ function ServiceCard({ icon, title }) {
 function ServiceImageCard({ image, title, text }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.55 }}
@@ -1121,11 +1113,11 @@ function ServiceImageCard({ image, title, text }) {
 function EventCard({ image, title, date, venue, price, tag }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 45 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.65 }}
-      whileHover={{ y: -10, scale: 1.02 }}
+      transition={{ duration: 0.4 }}
+      whileHover={{ y: -4, scale: 1.01 }}
       className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.28)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30">
@@ -1205,11 +1197,11 @@ function HomeGalleryCard({ item, index }) {
       initial={{ opacity: 0, y: 35 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.6, delay: index * 0.05 }}
-      whileHover={{ y: -8, scale: 1.02 }}
+      transition={{ duration: 0.4, delay: index * 0.03 }}
+      whileHover={{ y: -4, scale: 1.01 }}
       className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
-      <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30 sm:h-60">
+      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30 sm:h-60">
         {item.imageData ? (
           <img
             src={item.imageData}
