@@ -19,6 +19,10 @@ import {
 
 const API_URL = "https://dj-selva-events.onrender.com/api";
 
+const isComfortDevice =
+  typeof window !== "undefined" &&
+  window.matchMedia("(max-width: 1024px)").matches;
+
 function Home() {
   const headphones = useMemo(
     () => [
@@ -119,14 +123,30 @@ function Home() {
         <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:90px_90px]" />
 
         <motion.div
-          animate={{ x: [0, 80, 0], y: [0, 40, 0], scale: [1, 1.12, 1] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          animate={
+            isComfortDevice
+              ? { opacity: [0.16, 0.26, 0.16] }
+              : { x: [0, 80, 0], y: [0, 40, 0], scale: [1, 1.12, 1] }
+          }
+          transition={{
+            duration: isComfortDevice ? 6 : 9,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
           className="absolute left-[8%] top-[25%] h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl sm:h-56 sm:w-56"
         />
 
         <motion.div
-          animate={{ x: [0, -70, 0], y: [0, 50, 0], scale: [1, 1.1, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          animate={
+            isComfortDevice
+              ? { opacity: [0.14, 0.24, 0.14] }
+              : { x: [0, -70, 0], y: [0, 50, 0], scale: [1, 1.1, 1] }
+          }
+          transition={{
+            duration: isComfortDevice ? 7 : 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
           className="absolute bottom-[18%] right-[10%] h-44 w-44 rounded-full bg-purple-500/10 blur-3xl sm:h-64 sm:w-64"
         />
       </div>
@@ -263,9 +283,9 @@ function Home() {
         <div className="mx-auto grid max-w-7xl items-center gap-8 md:gap-10 lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left Content */}
           <motion.div
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: isComfortDevice ? 12 : 35 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9 }}
+            transition={{ duration: isComfortDevice ? 0.45 : 0.9 }}
             className="order-1 text-center lg:pl-8 lg:text-left xl:pl-10"
           >
             <motion.div
@@ -432,31 +452,37 @@ function Home() {
                 animate={{
                   opacity: 1,
                   scale: 1,
-                  rotateY: [0, 14, 0, -14, 0],
-                  rotateX: [0, 5, 0, -5, 0],
-                  rotateZ: [0, 2, 0, -2, 0],
-                  y: [0, -14, 0],
+                  rotateY: isComfortDevice
+                    ? [0, 4, 0, -4, 0]
+                    : [0, 14, 0, -14, 0],
+                  rotateX: isComfortDevice
+                    ? [0, 2, 0, -2, 0]
+                    : [0, 5, 0, -5, 0],
+                  rotateZ: isComfortDevice
+                    ? [0, 1, 0, -1, 0]
+                    : [0, 2, 0, -2, 0],
+                  y: isComfortDevice ? [0, -5, 0] : [0, -14, 0],
                 }}
                 transition={{
                   opacity: { duration: 0.4 },
                   scale: { duration: 0.45 },
                   rotateY: {
-                    duration: 5.5,
+                    duration: isComfortDevice ? 7 : 5.5,
                     repeat: Infinity,
                     ease: "easeInOut",
                   },
                   rotateX: {
-                    duration: 5.5,
+                    duration: isComfortDevice ? 7 : 5.5,
                     repeat: Infinity,
                     ease: "easeInOut",
                   },
                   rotateZ: {
-                    duration: 5.5,
+                    duration: isComfortDevice ? 7 : 5.5,
                     repeat: Infinity,
                     ease: "easeInOut",
                   },
                   y: {
-                    duration: 5.5,
+                    duration: isComfortDevice ? 7 : 5.5,
                     repeat: Infinity,
                     ease: "easeInOut",
                   },
@@ -555,10 +581,10 @@ function Home() {
       {/* Event Section */}
       <section id="events" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.96 }}
+          initial={{ opacity: 0, y: isComfortDevice ? 12 : 50, scale: isComfortDevice ? 1 : 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.25 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: isComfortDevice ? 0.42 : 0.8, ease: "easeOut" }}
           className="mx-auto max-w-7xl rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-2xl sm:rounded-[2.5rem] sm:p-8 md:p-12"
         >
           <div className="grid items-center gap-10 lg:grid-cols-2">
@@ -596,7 +622,7 @@ function Home() {
 
               <Link
                 to="/booking"
-                className="mt-7 block rounded-full bg-white py-4 text-center font-black text-black transition hover:bg-cyan-300"
+                className="premium-button mt-7 block rounded-full bg-white py-4 text-center font-black text-black transition hover:bg-cyan-300"
               >
                 Book Tickets
               </Link>
@@ -609,10 +635,10 @@ function Home() {
       <section id="services" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <motion.div
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: isComfortDevice ? 10 : 35 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: isComfortDevice ? 0.35 : 0.7 }}
             className="mb-12 text-center"
           >
             <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-cyan-300">
@@ -680,7 +706,7 @@ function Home() {
           <div className="mt-10 text-center">
             <Link
               to="/private-booking"
-              className="inline-block rounded-full bg-cyan-300 px-8 py-4 font-black text-black transition hover:bg-white"
+              className="premium-button inline-block rounded-full bg-cyan-300 px-8 py-4 text-center font-black text-black transition hover:bg-white"
             >
               Book DJ Selva for Your Event
             </Link>
@@ -692,10 +718,10 @@ function Home() {
 <section id="featured-events" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
   <div className="mx-auto max-w-7xl">
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 10 : 35 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.7 }}
+      transition={{ duration: isComfortDevice ? 0.35 : 0.7 }}
       className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end"
     >
       <div>
@@ -743,7 +769,7 @@ function Home() {
 
     <Link
       to="/booking"
-      className="mt-6 inline-block rounded-full bg-white px-7 py-3 font-black text-black transition hover:bg-cyan-300"
+      className="premium-button mt-6 inline-block rounded-full bg-white px-7 py-3 text-center font-black text-black transition hover:bg-cyan-300"
     >
       Book DJ Selva
     </Link>
@@ -772,10 +798,10 @@ function Home() {
 <section id="gallery-preview" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
   <div className="mx-auto max-w-7xl">
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 8 : 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.7 }}
+      transition={{ duration: isComfortDevice ? 0.35 : 0.7 }}
       className="mb-12 text-center"
     >
       <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-cyan-300">
@@ -816,7 +842,7 @@ function Home() {
     <div className="mt-10 text-center">
       <Link
         to="/gallery"
-        className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-black text-black transition hover:bg-cyan-300"
+        className="premium-button inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 font-black text-black transition hover:bg-cyan-300"
       >
         View Full Gallery
         <ArrowRight size={20} />
@@ -828,10 +854,10 @@ function Home() {
       {/* Booking CTA */}
       <section id="booking" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.96 }}
+          initial={{ opacity: 0, y: isComfortDevice ? 12 : 40, scale: isComfortDevice ? 1 : 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.75 }}
+          transition={{ duration: isComfortDevice ? 0.4 : 0.75 }}
           className="mx-auto max-w-5xl text-center"
         >
           <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-cyan-300">
@@ -864,7 +890,7 @@ function Home() {
 
             <Link
               to="/contact"
-              className="w-full rounded-full border border-white/15 bg-white/[0.05] px-7 py-4 text-center font-bold text-white transition hover:bg-white hover:text-black sm:w-auto sm:px-9"
+              className="premium-button w-full rounded-full border border-white/15 bg-white/[0.05] px-7 py-4 text-center font-bold text-white transition hover:bg-white hover:text-black sm:w-auto sm:px-9"
             >
               Contact Details
             </Link>
@@ -875,10 +901,10 @@ function Home() {
       {/* Footer / Contact */}
 <footer id="contact" className="premium-section px-4 pb-10 pt-8 sm:px-6">
   <motion.div
-    initial={{ opacity: 0, y: 18 }}
+    initial={{ opacity: 0, y: isComfortDevice ? 8 : 18 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, amount: 0.35 }}
-    transition={{ duration: 0.6 }}
+    transition={{ duration: isComfortDevice ? 0.32 : 0.6 }}
     className="premium-card mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-black/50 backdrop-blur-2xl"
   >
     <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:p-10">
@@ -1014,18 +1040,18 @@ function Home() {
 function HighlightImageCard({ image, icon, title, text }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, scale: 0.96 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 12 : 40, scale: isComfortDevice ? 1 : 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.65, ease: "easeOut" }}
-      whileHover={{ y: -4, scale: 1.01 }}
+      transition={{ duration: isComfortDevice ? 0.35 : 0.65, ease: "easeOut" }}
+      whileHover={isComfortDevice ? {} : { y: -4, scale: 1.01 }}
       className="premium-card group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40 hover:shadow-[0_0_45px_rgba(34,211,238,0.16)]"
     >
       <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/25 sm:h-56">
         <img
           src={image}
           alt={title}
-          className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+          className="h-full w-full object-cover opacity-85 transition duration-500 md:group-hover:scale-105 md:group-hover:opacity-100"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b101c] via-[#0b101c]/35 to-transparent" />
@@ -1073,10 +1099,10 @@ function SectionWrapper({ id, children }) {
 function SectionHeading({ label, title, text, align = "center" }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 8 : 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.7 }}
+      transition={{ duration: isComfortDevice ? 0.35 : 0.7 }}
       className={`mb-10 ${
         align === "center"
           ? "mx-auto max-w-4xl text-center"
@@ -1107,7 +1133,7 @@ function SectionHeading({ label, title, text, align = "center" }) {
 function InfoPill({ icon, text }) {
   return (
     <motion.div
-      whileHover={{ scale: 1.03, y: -3 }}
+      whileHover={isComfortDevice ? {} : { scale: 1.03, y: -3 }}
       className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/30 p-4 text-white/75 transition hover:border-cyan-300/30"
     >
       <span className="text-cyan-300">{icon}</span>
@@ -1119,7 +1145,7 @@ function InfoPill({ icon, text }) {
 function TicketRow({ name, price }) {
   return (
     <motion.div
-      whileHover={{ x: 6, scale: 1.02 }}
+      whileHover={isComfortDevice ? {} : { x: 6, scale: 1.02 }}
       className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-cyan-300/30"
     >
       <span className="font-bold text-white/85">{name}</span>
@@ -1131,12 +1157,12 @@ function TicketRow({ name, price }) {
 function ServiceCard({ icon, title }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 8 : 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.55 }}
-      whileHover={{ y: -8, scale: 1.03 }}
-      className="group rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 text-center shadow-[0_0_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
+      transition={{ duration: isComfortDevice ? 0.3 : 0.55 }}
+      whileHover={isComfortDevice ? {} : { y: -8, scale: 1.03 }}
+      className="premium-card group rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 text-center shadow-[0_0_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-300/10 text-3xl transition group-hover:scale-110">
         {icon}
@@ -1149,18 +1175,18 @@ function ServiceCard({ icon, title }) {
 function ServiceImageCard({ image, title, text }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 8 : 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.55 }}
-      whileHover={{ y: -7, scale: 1.02 }}
+      transition={{ duration: isComfortDevice ? 0.3 : 0.55 }}
+      whileHover={isComfortDevice ? {} : { y: -7, scale: 1.02 }}
       className="premium-card group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="relative h-44 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/25">
         <img
           src={image}
           alt={title}
-          className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+          className="h-full w-full object-cover opacity-85 transition duration-500 md:group-hover:scale-105 md:group-hover:opacity-100"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b101c] via-[#0b101c]/40 to-transparent" />
@@ -1183,11 +1209,11 @@ function ServiceImageCard({ image, title, text }) {
 function EventCard({ image, title, date, venue, price, tag }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 8 : 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.4 }}
-      whileHover={{ y: -4, scale: 1.01 }}
+      transition={{ duration: isComfortDevice ? 0.28 : 0.4 }}
+      whileHover={isComfortDevice ? {} : { y: -4, scale: 1.01 }}
       className="premium-card group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.28)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30">
@@ -1195,7 +1221,7 @@ function EventCard({ image, title, date, venue, price, tag }) {
           <img
             src={image}
             alt={title}
-            className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+            className="h-full w-full object-cover opacity-85 transition duration-500 md:group-hover:scale-105 md:group-hover:opacity-100"
           />
         ) : (
           <>
@@ -1264,11 +1290,11 @@ function EventCard({ image, title, date, venue, price, tag }) {
 function HomeGalleryCard({ item, index }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 8 : 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.4, delay: index * 0.03 }}
-      whileHover={{ y: -4, scale: 1.01 }}
+      transition={{ duration: isComfortDevice ? 0.28 : 0.4, delay: isComfortDevice ? 0 : index * 0.03 }}
+      whileHover={isComfortDevice ? {} : { y: -4, scale: 1.01 }}
       className="premium-card group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30 sm:h-60">
@@ -1276,7 +1302,7 @@ function HomeGalleryCard({ item, index }) {
           <img
             src={item.imageData}
             alt={item.title}
-            className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+            className="h-full w-full object-cover opacity-85 transition duration-500 md:group-hover:scale-105 md:group-hover:opacity-100"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
@@ -1315,12 +1341,12 @@ function HomeGalleryCard({ item, index }) {
 function GalleryCard({ label }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: isComfortDevice ? 10 : 35 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.6 }}
-      whileHover={{ y: -8, scale: 1.03 }}
-      className="group relative h-72 overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/15 via-blue-500/15 to-purple-600/25 shadow-[0_0_40px_rgba(0,0,0,0.25)]"
+      transition={{ duration: isComfortDevice ? 0.32 : 0.6 }}
+      whileHover={isComfortDevice ? {} : { y: -8, scale: 1.03 }}
+      className="premium-card group relative h-72 overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-400/15 via-blue-500/15 to-purple-600/25 shadow-[0_0_40px_rgba(0,0,0,0.25)]"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.28),transparent_36%)] transition group-hover:scale-110" />
       <div className="absolute inset-0 bg-black/25" />
