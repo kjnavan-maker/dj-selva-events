@@ -14,6 +14,8 @@ body {
   color: white;
   width: 100%;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -33,7 +35,8 @@ video {
     overflow-x: hidden;
   }
 
-  section {
+  section,
+  footer {
     padding-left: 14px !important;
     padding-right: 14px !important;
   }
@@ -57,5 +60,86 @@ video {
   .mobile-hide-glow {
     filter: blur(40px) !important;
     opacity: 0.35 !important;
+  }
+}
+
+/* Premium Responsive Comfort */
+@media (max-width: 1024px) {
+  .premium-section {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  .premium-card {
+    border-radius: 1.5rem !important;
+  }
+
+  .premium-title {
+    line-height: 1.08 !important;
+    letter-spacing: -0.035em !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .premium-section {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  .premium-card {
+    border-radius: 1.35rem !important;
+  }
+
+  .premium-button {
+    width: 100% !important;
+    min-height: 52px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .premium-grid {
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .premium-section {
+    padding-top: 2.6rem !important;
+    padding-bottom: 2.6rem !important;
+  }
+
+  .premium-title {
+    font-size: 2.15rem !important;
+  }
+
+  .premium-subtitle {
+    font-size: 0.92rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .premium-card {
+    border-radius: 1.25rem !important;
+  }
+
+  .premium-glow-soft {
+    opacity: 0.22 !important;
+    filter: blur(34px) !important;
+  }
+}
+
+/* Better mobile tap and scroll feel */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:scale-105:hover,
+  .hover\:scale-110:hover,
+  .hover\:scale-103:hover,
+  .hover\:scale-102:hover,
+  .hover\:scale-101:hover {
+    transform: none !important;
+  }
+
+  .hover\:-translate-y-1:hover {
+    transform: none !important;
   }
 }

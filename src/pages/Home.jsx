@@ -260,7 +260,7 @@ function Home() {
   id="home"
   className="relative px-4 pb-20 pt-24 sm:px-5 sm:pb-24 sm:pt-28 lg:flex lg:min-h-screen lg:items-center lg:pt-28"
 >
-        <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 md:gap-10 lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -277,7 +277,7 @@ function Home() {
               Sri Lanka’s Premium DJ Experience
             </motion.div>
 
-            <h1 className="text-[2.45rem] font-black leading-[1.02] tracking-[-0.04em] sm:text-5xl md:text-7xl lg:text-[4.8rem] xl:text-[5.4rem]">
+            <h1 className="premium-title text-[2.45rem] font-black leading-[1.02] tracking-[-0.04em] sm:text-5xl md:text-7xl lg:text-[4.8rem] xl:text-[5.4rem]">
               Feel the
               <br />
               Beat.
@@ -289,7 +289,7 @@ function Home() {
               </span>
             </h1>
 
-            <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/65 sm:text-base md:text-lg lg:mx-0">
+            <p className="premium-subtitle mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/65 sm:text-base md:text-lg lg:mx-0">
               Premium DJ nights, private events, weddings, club parties, and
               unforgettable live music experiences with DJ Selva.
             </p>
@@ -297,21 +297,21 @@ function Home() {
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap lg:justify-start">
               <Link
                 to="/booking"
-                className="flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
+                className="premium-button flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
               >
                 Book Event Ticket
               </Link>
 
               <Link
                 to="/private-booking"
-                className="flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
+                className="premium-button flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
               >
                 Book DJ Selva
               </Link>
 
               <a
                 href="#featured-events"
-                className="w-full rounded-full border border-white/15 bg-white/[0.04] px-5 py-3.5 text-center text-sm font-bold text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:w-auto sm:px-7 md:text-base"
+                className="premium-button w-full rounded-full border border-white/15 bg-white/[0.04] px-5 py-3.5 text-center text-sm font-bold text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:w-auto sm:px-7 md:text-base"
               >
                 View Events
               </a>
@@ -320,7 +320,7 @@ function Home() {
                 href="https://wa.me/94771234567"
                 target="_blank"
                 rel="noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#22c55e] px-5 py-3.5 text-sm font-bold text-white transition hover:scale-105 sm:w-auto sm:px-7 md:text-base"
+                className="premium-button flex w-full items-center justify-center gap-2 rounded-full bg-[#22c55e] px-5 py-3.5 text-sm font-bold text-white transition hover:scale-105 sm:w-auto sm:px-7 md:text-base"
               >
                 <MessageCircle size={20} />
                 WhatsApp
@@ -333,7 +333,7 @@ function Home() {
             initial={{ opacity: 0, scale: 0.84, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="relative order-2 -mt-2 sm:mt-0"
+            className="relative order-2 -mt-1 sm:mt-2 lg:mt-0"
           >
             {[
               {
@@ -525,7 +525,7 @@ function Home() {
     text="A clean event experience with live shows, QR ticket booking, and professional event presentation."
   />
 
-  <div className="grid gap-5 md:grid-cols-3">
+  <div className="premium-grid grid gap-5 md:grid-cols-3">
     <HighlightImageCard
       image="/highlight-live-event.jpg"
       icon={<Users size={24} />}
@@ -553,7 +553,7 @@ function Home() {
 
 
       {/* Event Section */}
-      <section id="events" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+      <section id="events" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -606,7 +606,7 @@ function Home() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+      <section id="services" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 35 }}
@@ -627,7 +627,7 @@ function Home() {
             </p>
           </motion.div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="premium-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
   <ServiceImageCard
     image="/service-club-events.jpg"
     title="Club Events"
@@ -689,7 +689,7 @@ function Home() {
       </section>
 
       {/* Featured Events Section */}
-<section id="featured-events" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+<section id="featured-events" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
   <div className="mx-auto max-w-7xl">
     <motion.div
       initial={{ opacity: 0, y: 35 }}
@@ -751,7 +751,7 @@ function Home() {
 )}
 
     {!isEventsLoading && events.length > 0 && (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="premium-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {events.map((eventItem) => (
           <EventCard
             key={eventItem._id || eventItem.eventId}
@@ -769,7 +769,7 @@ function Home() {
 </section>
 
       {/* Gallery Preview */}
-<section id="gallery-preview" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+<section id="gallery-preview" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
   <div className="mx-auto max-w-7xl">
     <motion.div
       initial={{ opacity: 0, y: 18 }}
@@ -802,7 +802,7 @@ function Home() {
         </p>
       </div>
     ) : (
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="premium-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {galleryPreview.map((item, index) => (
           <HomeGalleryCard
             key={item._id || item.galleryId}
@@ -826,7 +826,7 @@ function Home() {
 </section>
 
       {/* Booking CTA */}
-      <section id="booking" className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+      <section id="booking" className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -850,14 +850,14 @@ function Home() {
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
             <Link
   to="/booking"
-  className="flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
+  className="premium-button flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
 >
   Book Event Ticket
 </Link>
 
             <Link
               to="/private-booking"
-              className="flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
+              className="premium-button flex w-full items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 px-5 py-3.5 text-center text-sm font-black text-cyan-300 transition hover:bg-cyan-300 hover:text-black sm:w-auto sm:px-7 md:text-base"
             >
               Book DJ Selva
             </Link>
@@ -873,13 +873,13 @@ function Home() {
       </section>
 
       {/* Footer / Contact */}
-<footer id="contact" className="px-4 pb-10 pt-8 sm:px-6">
+<footer id="contact" className="premium-section px-4 pb-10 pt-8 sm:px-6">
   <motion.div
     initial={{ opacity: 0, y: 18 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, amount: 0.35 }}
     transition={{ duration: 0.6 }}
-    className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-black/50 backdrop-blur-2xl"
+    className="premium-card mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-black/50 backdrop-blur-2xl"
   >
     <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:p-10">
       <div>
@@ -905,10 +905,10 @@ function Home() {
           lighting setup, and unforgettable live music experiences in Sri Lanka.
         </p>
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link
             to="/private-booking"
-            className="rounded-full bg-white px-6 py-3 text-sm font-black text-black transition hover:bg-cyan-300"
+            className="premium-button rounded-full bg-white px-6 py-3 text-center text-sm font-black text-black transition hover:bg-cyan-300"
           >
             Book DJ Selva
           </Link>
@@ -917,7 +917,7 @@ function Home() {
             href="https://wa.me/94771234567"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-2 rounded-full bg-[#22c55e] px-6 py-3 text-sm font-black text-white transition hover:scale-105"
+            className="premium-button flex items-center justify-center gap-2 rounded-full bg-[#22c55e] px-6 py-3 text-sm font-black text-white transition hover:scale-105"
           >
             <MessageCircle size={18} />
             WhatsApp
@@ -1019,7 +1019,7 @@ function HighlightImageCard({ image, icon, title, text }) {
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.65, ease: "easeOut" }}
       whileHover={{ y: -4, scale: 1.01 }}
-      className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40 hover:shadow-[0_0_45px_rgba(34,211,238,0.16)]"
+      className="premium-card group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40 hover:shadow-[0_0_45px_rgba(34,211,238,0.16)]"
     >
       <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/25 sm:h-56">
         <img
@@ -1063,7 +1063,7 @@ function SectionWrapper({ id, children }) {
   return (
     <section
       id={id}
-      className="scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20"
+      className="premium-section scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16 lg:py-20"
     >
       <div className="mx-auto max-w-7xl">{children}</div>
     </section>
@@ -1154,7 +1154,7 @@ function ServiceImageCard({ image, title, text }) {
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.55 }}
       whileHover={{ y: -7, scale: 1.02 }}
-      className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
+      className="premium-card group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="relative h-44 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/25">
         <img
@@ -1188,7 +1188,7 @@ function EventCard({ image, title, date, venue, price, tag }) {
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.4 }}
       whileHover={{ y: -4, scale: 1.01 }}
-      className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.28)] backdrop-blur-2xl transition hover:border-cyan-300/40"
+      className="premium-card group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.28)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="relative h-52 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30">
         {image ? (
@@ -1269,7 +1269,7 @@ function HomeGalleryCard({ item, index }) {
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.4, delay: index * 0.03 }}
       whileHover={{ y: -4, scale: 1.01 }}
-      className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
+      className="premium-card group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-[0_0_45px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition hover:border-cyan-300/40"
     >
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-cyan-400/20 via-blue-500/20 to-purple-600/30 sm:h-60">
         {item.imageData ? (
